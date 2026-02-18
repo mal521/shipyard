@@ -11,8 +11,8 @@ The portfolio site and app you made today are starting points. They're intention
 
 Your AI chat does not save automatically. If you close the tab or your session times out, that conversation is gone. Every time the AI gives you code you want to keep:
 
-1. Copy it into a file on your desktop (paste into TextEdit, Notepad, or VS Code)
-2. Push it to GitHub immediately
+1. Copy it somewhere safe (a notes app, a Google Doc, or a code editor like VS Code)
+2. Commit it to GitHub immediately
 3. Or tell the AI: `"Give me a single file with everything we've built so far"`
 
 Save early, save often. A closed tab is a lost session.

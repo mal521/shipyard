@@ -8,7 +8,7 @@
 
 ## BEFORE STUDENTS JOIN THE CALL
 
-[Checklist. Do these 5 min before the scheduled start:]
+[Checklist. Do these 5 min before the scheduled start. Pre-session email should have gone out 24 hrs ago (see `curriculum/pre-session-email.md`).]
 
 - [ ] Your screen shared in Zoom, showing claude.ai
 - [ ] Demo portfolio site open in a browser tab (your example)
@@ -40,7 +40,7 @@
 
 [Share your screen showing claude.ai. Paste the link into Zoom chat.]
 
-"Everyone go to claude.ai and log in. If you don't have an account, make one now. Free. Link's in the chat."
+"Everyone go to claude.ai and log in. You should have an account from the setup email. If you don't, make one now — link's in the chat."
 
 [Give them 60 seconds. Watch the Zoom grid for confused faces. Ask "Does everyone have Claude open?" before moving on.]
 
@@ -48,7 +48,7 @@
 
 [Pause for a beat.]
 
-"Your AI chat does not save automatically. If you close the tab, if your laptop dies, if you accidentally refresh, your work is gone. Just gone. So the rule is simple: every time Claude gives you something good, you save it. Copy it. Paste it into a text file on your desktop. Do not trust the browser tab."
+"Your AI chat does not save automatically. If you close the tab, if your laptop dies, if you accidentally refresh, your work is gone. Just gone. So the rule is simple: every time Claude gives you something good, you save it. Copy it. Paste it somewhere — a notes app, a Google Doc, anywhere. Do not trust the browser tab."
 
 "We good? Good. Let's build."
 
@@ -135,17 +135,13 @@ Add a section for my extracurriculars and activities
 
 [Type it on screen: yourusername.github.io]
 
-"Has to match your username exactly. Set it to Public. Click 'Create repository.'"
+"Has to match your username exactly. Set it to Public. Check the box that says 'Add a README file.' Click 'Create repository.'"
 
-[Do this on your screen. Pause. Say "Drop a message in chat when you've got the repo created."]
-
-"You should see a setup page. Click the link that says 'uploading an existing file.' If you don't see those exact words, look for 'upload' somewhere on that page."
-
-[Pause.]
+[Do this on your screen. Pause. Say "Drop a message in chat when you've got the repo created." The README checkbox is important — it initializes the repo so the 'Add file' button appears immediately.]
 
 "Now go back to your Claude tab. Select all the code Claude gave you. Copy it. Then go back to GitHub. Click 'Add file' and then 'Create new file.' In the filename field at the top, type index.html. Paste your code into the big editor box. Scroll down and click 'Commit changes.'"
 
-[Do this on your screen so they can watch. This avoids TextEdit issues entirely — everything stays in the browser.]
+[Do this on your screen so they can watch. Everything stays in the browser — no TextEdit, no file downloads.]
 
 [Pause. Say "How's everyone doing? Thumbs up in Zoom reactions when you've committed the file."]
 
@@ -163,7 +159,7 @@ Add a section for my extracurriculars and activities
 
 ### Quick reminder (30 sec)
 
-"And save your code. Your GitHub repo has a copy, but also copy the code from Claude into a text file on your desktop as a backup. Don't rely on only one place."
+"And save your code. Your GitHub repo has a copy, but also copy the code from Claude and paste it somewhere safe as a backup — a notes app, a Google Doc, whatever. Don't rely on only one place."
 
 ---
 
@@ -252,9 +248,7 @@ Description: [ONE SENTENCE ABOUT WHAT IT DOES]
 Keep the same design. Give me the updated code.
 ```
 
-"Download the new code as index.html and upload it to your portfolio repo on GitHub. It'll replace the old version."
-
-[Say "If you're running short on time for this step, you can do it after the call. The important thing is both projects are deployed."]
+"Copy the updated code. Go to your portfolio repo on GitHub, click on index.html, then click the pencil icon to edit. Select all, paste the new code over it, and commit. It'll replace the old version."
 
 "Now your portfolio links to your app. Your app says 'Built with AI by your name.' Everything connects."
 

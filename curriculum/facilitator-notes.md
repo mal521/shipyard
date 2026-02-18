@@ -16,7 +16,7 @@ Keep this on your phone or second monitor. The seminar guide has the actual scri
 ## Claude Free Tier Warning
 
 The free tier of Claude has message limits. Students who iterate a lot can hit the cap mid-session. Mitigation:
-- Pre-session email tells students to sign up for Claude Pro free trial (no charge for first use)
+- The pre-session email has them create a free account. The free tier is usually enough for one session, but fast iterators can hit the wall.
 - If someone hits the limit during the session, have them open an incognito/private browser window and create a new free account with a different email. This is a last resort but it works.
 - Don't mention this proactively during the session — only address it if someone hits the wall
 
@@ -83,11 +83,11 @@ Paste the current prompt or code snippet into the Zoom chat so they can copy it.
 **A deploy fails and you can't debug it live.**
 Share the backup screencast of a working deploy. Tell the student you'll troubleshoot with them in the last 5 min or after the session. Keep the group moving. This happens more often than you'd think.
 
-**Student can't figure out TextEdit plain text mode.**
-"On Mac, open TextEdit, then go to the Format menu at the top and click 'Make Plain Text.' Then paste and save as index.html." You will say this at least once per session.
+**Student can't figure out GitHub's file editor.**
+"On GitHub, click 'Add file' then 'Create new file.' Type index.html as the filename at the top. Paste your code in the big box. Scroll down and click 'Commit changes.'" Walk them through it on your shared screen if needed.
 
 **Student closes their tab and loses everything.**
-"This is why we said save your work. If you saved to GitHub, it's still there. If not, you get to practice building it again. You'll be faster this time." Don't dwell on it. They'll remember next time.
+"This is why we said save your work. If you committed to GitHub, it's still there. If not, you get to practice building it again. You'll be faster this time." Don't dwell on it. They'll remember next time.
 
 ## Parent FAQ
 
@@ -105,7 +105,7 @@ Parents ask these during or after sessions. Keep answers short and factual.
 |---------|-------|----------------|
 | 1 (this one) | Portfolio + micro-app | Website + first app |
 | 2 | Level up | More complex app (multi-page, uses an API) |
-| 3 | Automate your life | Personal tool (daily planner, habit tracker, budget thing) |
-| 4 | Build for someone else | Tool for a club, a team, a family member |
+| 3 | Automate your life | Personal tool (daily planner, habit tracker, budget tool) |
+| 4 | Build for someone else | Tool for a club, a team, a family member, or a small business |
 
 The best sessions happen when a returning student pitches their own idea. Let them run with it. Your job shifts from guiding to unblocking.
