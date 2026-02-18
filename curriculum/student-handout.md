@@ -78,7 +78,7 @@ Dark mode toggle. Export to PDF. Data visualizations. Keyboard shortcuts. Keep p
 4. **Ongoing.** Every project you build goes on your portfolio. A portfolio with five working projects tells a different story than one with a single page. It compounds.
 
 ## Resources
-- **Claude:** claude.ai (free tier available)
+- **Claude:** claude.ai (start the free Pro trial for unlimited messages)
 - **GitHub Pages:** pages.github.com (free hosting, where your site lives)
 - **Questions?** Use the contact form at mal521.github.io/shipyard
 

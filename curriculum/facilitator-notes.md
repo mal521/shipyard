@@ -15,10 +15,7 @@ Keep this on your phone or second monitor. The seminar guide has the actual scri
 
 ## Claude Free Tier Warning
 
-The free tier of Claude has message limits. Students who iterate a lot can hit the cap mid-session. Mitigation:
-- The pre-session email has them create a free account. The free tier is usually enough for one session, but fast iterators can hit the wall.
-- If someone hits the limit during the session, have them open an incognito/private browser window and create a new free account with a different email. This is a last resort but it works.
-- Don't mention this proactively during the session — only address it if someone hits the wall
+The free tier of Claude has message limits. The pre-session email tells students to start a free Pro trial, which gives unlimited messages. If someone didn't do this and hits the limit mid-session, have them start the trial right then (Settings > Subscription) or open an incognito window with a new account as a last resort.
 
 ## Timing
 

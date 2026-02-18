@@ -11,7 +11,7 @@ Hi [STUDENT NAME],
 Looking forward to building with you tomorrow. To make sure we use every minute of our 90 minutes actually building, please set up these three things before the session:
 
 **1. Claude account (2 min)**
-Go to claude.ai and create a free account. This is the AI tool we'll use to build everything. If you already have one, just make sure you can log in.
+Go to claude.ai and create a free account. This is the AI tool we'll use to build everything. Once you're in, start the free Pro trial — it gives you unlimited messages so you won't hit any limits during our session. You can cancel anytime. If you already have an account, just make sure you can log in.
 
 **2. GitHub account (2 min)**
 Go to github.com and create a free account. This is where your projects will live on the internet. Pick a username you're happy with — it'll be part of your portfolio URL (yourusername.github.io).

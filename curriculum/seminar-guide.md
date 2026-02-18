@@ -316,7 +316,7 @@ ALWAYS       Every new project goes on your portfolio
 | Student says "AI did all the work" | "You decided what to build, how it should look, what to change, and then you shipped it. AI was the tool. You were the one making decisions." |
 | Student says "This is too easy" | "Good. Add features. Dark mode. Animations. PDF export. Push it until it breaks and then fix it." |
 | Student closes their tab and loses everything | "This is why we talked about saving. If you committed to GitHub, it's still there. If not, rebuild it. You'll be faster this time." |
-| Student hits Claude free tier limit | "Open an incognito window, make a new account with a different email. We'll get you back up." |
+| Student hits Claude free tier limit | "Go to Settings, start the free Pro trial. Takes 30 seconds. If that doesn't work, open an incognito window and make a new account." |
 | You're running 5+ min behind | Skip "Connect them" and "What you actually learned." Weave key points into your wrap. Deploy apps as a group. |
 | You're running 5+ min ahead | Let students customize more. Have 2-3 students share their screen and show what they built. |
 | Parent asks "Is this just ChatGPT?" | "Students leave with live, deployed projects on the internet. They learn prompt engineering, debugging, and deployment. The output is a portfolio, not a conversation." |
