@@ -3,7 +3,7 @@
 ## What You Built Today
 - A live personal website at `[your-username].github.io`
 - A working app at `[your-username].github.io/[app-name]`
-- A portfolio that connects them together
+- A portfolio that connects them
 
 The portfolio site and app you made today are starting points. They're intentionally simple because we only had 90 minutes. You can build things significantly more ambitious than what we demoed. A tool that solves a real problem you have. Something for your club or your team. An app you'd actually use every day. The prompts below will get you there.
 
@@ -78,7 +78,7 @@ Dark mode toggle. Export to PDF. Data visualizations. Keyboard shortcuts. Keep p
 4. **Ongoing.** Every project you build goes on your portfolio. A portfolio with five working projects tells a different story than one with a single page. It compounds.
 
 ## Resources
-- **Claude:** claude.ai (start the free Pro trial for unlimited messages)
+- **Claude:** claude.ai (the free Pro trial gives you plenty of messages to keep building)
 - **GitHub Pages:** pages.github.com (free hosting, where your site lives)
 - **Questions?** Use the contact form at mal521.github.io/shipyard
 

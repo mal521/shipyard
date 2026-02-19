@@ -15,7 +15,7 @@ Keep this on your phone or second monitor. The seminar guide has the actual scri
 
 ## Claude Free Tier Warning
 
-The free tier of Claude has message limits. The pre-session email tells students to start a free Pro trial, which gives unlimited messages. If someone didn't do this and hits the limit mid-session, have them start the trial right then (Settings > Subscription) or open an incognito window with a new account as a last resort.
+The free tier of Claude has tight message limits (~10-15 per 5 hours). The pre-session email tells students to start a free Pro trial, which gives roughly 5x more — plenty for a 90-minute session. If someone didn't do this and hits the limit mid-session, have them start the trial right then (Settings > Subscription) or open an incognito window with a new account as a last resort.
 
 ## Timing
 
