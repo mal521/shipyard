@@ -209,6 +209,12 @@ Build the complete app.
 
 "Hit enter. This one takes a bit longer to generate."
 
+[While students wait for Claude to generate, drop this in the chat:]
+
+"While we wait — someone built a script that automatically opens TikTok and Instagram Reels whenever Claude is thinking, so they wouldn't get bored staring at the screen. That's a real project someone shipped. You could literally build that after this session."
+
+[Link in chat: https://www.instagram.com/reels/DR5E5f4gbYl/ — gets a laugh and subtly shows them what's possible.]
+
 [Watch the Zoom grid. This is the core of the session. After about 2 minutes:]
 
 "If Claude gives you something and it doesn't work, that's normal. Actually, that's useful. Copy the error message, paste it back into Claude, and say 'I'm getting this error, fix it.' That back and forth is called iterative development. It's not a sign something went wrong. It is the process."
