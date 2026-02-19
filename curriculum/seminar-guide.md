@@ -211,7 +211,7 @@ Build the complete app.
 
 [While students wait for Claude to generate, drop this in the chat:]
 
-"While we wait — someone built a script that automatically opens TikTok and Instagram Reels whenever Claude is thinking, so they wouldn't get bored staring at the screen. That's a real project someone shipped. You could literally build that after this session."
+"While we wait — someone built a script that automatically opens TikTok, Instagram Reels, and YouTube Shorts whenever Claude is thinking, so they wouldn't get bored staring at the screen. That's a real project someone shipped. You could literally build that after this session."
 
 [Link in chat: https://www.instagram.com/reels/DR5E5f4gbYl/ — gets a laugh and subtly shows them what's possible.]
 
