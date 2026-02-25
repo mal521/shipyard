@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shipyard | Build Real Things With AI</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👾</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%91%BE%3C/text%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -1323,14 +1323,17 @@
         /* ── RESPONSIVE ── */
         @media (max-width: 1024px) {
             .nav-hamburger { display: flex; }
+            nav.menu-open {
+                backdrop-filter: none;
+                background: #0a0a0f;
+                z-index: 9999;
+            }
             .nav-links {
                 display: none;
-                position: fixed;
+                position: absolute;
                 top: 0;
                 left: 0;
-                right: 0;
-                bottom: 0;
-                width: 100%;
+                width: 100vw;
                 height: 100vh;
                 height: 100dvh;
                 background: #0a0a0f;
@@ -1338,18 +1341,14 @@
                 align-items: center;
                 justify-content: center;
                 gap: 2.5rem;
-                z-index: 100;
+                z-index: 9998;
                 overflow-y: auto;
             }
             .nav-links.open {
                 display: flex;
             }
             .nav-links a {
-                font-size: 1rem;
-            }
-            nav:has(.nav-links.open) {
-                backdrop-filter: none;
-                background: #0a0a0f;
+                font-size: 1.1rem;
             }
         }
 
@@ -1384,7 +1383,7 @@
         <li><a href="#faq">faq</a></li>
         <li><a href="#contact" class="nav-cta">get started</a></li>
     </ul>
-    <div class="nav-hamburger" id="navHamburger" onclick="this.classList.toggle('open'); document.getElementById('navLinks').classList.toggle('open');">
+    <div class="nav-hamburger" id="navHamburger" onclick="this.classList.toggle('open'); document.getElementById('navLinks').classList.toggle('open'); document.getElementById('nav').classList.toggle('menu-open');">
         <span></span><span></span><span></span>
     </div>
 </nav>
@@ -1709,6 +1708,7 @@
         link.addEventListener('click', () => {
             document.getElementById('navLinks').classList.remove('open');
             document.getElementById('navHamburger').classList.remove('open');
+            document.getElementById('nav').classList.remove('menu-open');
         });
     });
 
