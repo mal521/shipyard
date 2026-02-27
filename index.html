@@ -1,1416 +1,1480 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shipyard | Build Real Things With AI</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%91%BE%3C/text%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <!-- ✅ viewport is unchanged -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipyard | Build Real Things With AI</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%91%BE%3C/text%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --muted: #1c1c2e;
+            --border: #2a2a3a;
+            --text: #e0e0e0;
+            --text-muted: #8b92a0;
+            --accent: #00ff88;
+            --accent-dim: rgba(0, 255, 136, 0.1);
+            --accent-secondary: #ff00ff;
+            --accent-tertiary: #00d4ff;
+            --destructive: #ff3366;
+            --mono: 'Share Tech Mono', 'Courier New', monospace;
+            --body: 'JetBrains Mono', monospace;
+            --heading: 'Orbitron', sans-serif;
+        }
 
-    :root {
-      --bg: #0a0a0f;
-      --surface: #12121a;
-      --muted: #1c1c2e;
-      --border: #2a2a3a;
-      --text: #e0e0e0;
-      --text-muted: #8b92a0;
-      --accent: #00ff88;
-      --accent-dim: rgba(0, 255, 136, 0.1);
-      --accent-secondary: #ff00ff;
-      --accent-tertiary: #00d4ff;
-      --destructive: #ff3366;
-      --mono: 'Share Tech Mono', 'Courier New', monospace;
-      --body: 'JetBrains Mono', monospace;
-      --heading: 'Orbitron', sans-serif;
-    }
+        html { scroll-behavior: smooth; }
 
-    html { scroll-behavior: smooth; }
+        /* ✅ HARDEN AGAINST MOBILE HORIZONTAL OVERFLOW */
+        html, body { width: 100%; overflow-x: clip; }
+        @supports not (overflow: clip) {
+            html, body { overflow-x: hidden; }
+        }
 
-    /* ✅ Prevent right-side “blank space” / horizontal pan on mobile */
-    html, body {
-      width: 100%;
-      overflow-x: clip;
-    }
-    @supports not (overflow: clip) {
-      html, body { overflow-x: hidden; }
-    }
+        body {
+            font-family: var(--body);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 14px;
+        }
 
-    body {
-      font-family: var(--body);
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      font-size: 14px;
-    }
+        /* ✅ iOS-friendly scroll lock for menu */
+        body.nav-lock {
+            position: fixed;
+            width: 100%;
+            overflow: hidden;
+        }
 
-    /* ✅ iOS-friendly scroll lock for mobile menu */
-    body.nav-lock {
-      position: fixed;
-      width: 100%;
-      overflow: hidden;
-    }
+        /* dot grid overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background-image: radial-gradient(circle, rgba(0, 255, 136, 0.07) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
 
-    /* dot grid overlay */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      background-image: radial-gradient(circle, rgba(0, 255, 136, 0.07) 1px, transparent 1px);
-      background-size: 24px 24px;
-    }
+        /* scanline overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 136, 0.015) 2px,
+                rgba(0, 255, 136, 0.015) 4px
+            );
+        }
 
-    /* scanline overlay */
-    body::after {
-      content: '';
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 255, 136, 0.015) 2px,
-        rgba(0, 255, 136, 0.015) 4px
-      );
-    }
+        body > * { position: relative; z-index: 1; }
 
-    body > * { position: relative; z-index: 1; }
+        /* ── CHAMFERED CLIP PATH UTILITY ── */
+        .chamfer {
+            clip-path: polygon(
+                12px 0%, calc(100% - 12px) 0%,
+                100% 12px, 100% calc(100% - 12px),
+                calc(100% - 12px) 100%, 12px 100%,
+                0% calc(100% - 12px), 0% 12px
+            );
+        }
 
-    /* ── CHAMFERED CLIP PATH UTILITY ── */
-    .chamfer {
-      clip-path: polygon(
-        12px 0%, calc(100% - 12px) 0%,
-        100% 12px, 100% calc(100% - 12px),
-        calc(100% - 12px) 100%, 12px 100%,
-        0% calc(100% - 12px), 0% 12px
-      );
-    }
+        .chamfer-sm {
+            clip-path: polygon(
+                8px 0%, calc(100% - 8px) 0%,
+                100% 8px, 100% calc(100% - 8px),
+                calc(100% - 8px) 100%, 8px 100%,
+                0% calc(100% - 8px), 0% 8px
+            );
+        }
 
-    .chamfer-sm {
-      clip-path: polygon(
-        8px 0%, calc(100% - 8px) 0%,
-        100% 8px, 100% calc(100% - 8px),
-        calc(100% - 8px) 100%, 8px 100%,
-        0% calc(100% - 8px), 0% 8px
-      );
-    }
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(16px);
+            background: rgba(10, 10, 15, 0.92);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.15s steps(3);
+        }
 
-    /* ── NAV ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      backdrop-filter: blur(16px);
-      background: rgba(10, 10, 15, 0.92);
-      border-bottom: 1px solid var(--border);
-      transition: all 0.15s steps(3);
-    }
+        nav.scrolled { padding: 0.6rem 2rem; }
 
-    nav.scrolled { padding: 0.6rem 2rem; }
+        .nav-logo {
+            font-family: var(--heading);
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3);
+        }
 
-    .nav-logo {
-      font-family: var(--heading);
-      font-weight: 700;
-      font-size: 0.95rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3);
-    }
-    .nav-logo span { color: var(--accent); }
+        .nav-logo span { color: var(--accent); }
 
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-      list-style: none;
-      flex-shrink: 1;
-      flex-wrap: nowrap;
-      min-width: 0;
-    }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            flex-shrink: 1;
+            flex-wrap: nowrap;
+            min-width: 0;
+        }
 
-    .nav-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      transition: color 0.15s;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            transition: color 0.15s;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
 
-    .nav-links a:hover {
-      color: var(--accent);
-      text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
-    }
+        .nav-links a:hover {
+            color: var(--accent);
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+        }
 
-    .nav-cta {
-      background: transparent !important;
-      color: var(--accent) !important;
-      padding: 0.45rem 1.1rem;
-      border: 1px solid var(--accent) !important;
-      font-weight: 700;
-      transition: all 0.15s;
-      clip-path: polygon(
-        8px 0%, calc(100% - 8px) 0%,
-        100% 8px, 100% calc(100% - 8px),
-        calc(100% - 8px) 100%, 8px 100%,
-        0% calc(100% - 8px), 0% 8px
-      );
-    }
+        .nav-cta {
+            background: transparent !important;
+            color: var(--accent) !important;
+            padding: 0.45rem 1.1rem;
+            border: 1px solid var(--accent) !important;
+            font-weight: 700;
+            transition: all 0.15s;
+            clip-path: polygon(
+                8px 0%, calc(100% - 8px) 0%,
+                100% 8px, 100% calc(100% - 8px),
+                calc(100% - 8px) 100%, 8px 100%,
+                0% calc(100% - 8px), 0% 8px
+            );
+        }
 
-    .nav-cta:hover {
-      background: var(--accent) !important;
-      color: var(--bg) !important;
-      box-shadow: 0 0 15px rgba(0, 255, 136, 0.4), 0 0 30px rgba(0, 255, 136, 0.2);
-    }
+        .nav-cta:hover {
+            background: var(--accent) !important;
+            color: var(--bg) !important;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4), 0 0 30px rgba(0, 255, 136, 0.2);
+        }
 
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 6rem 2rem 4rem;
-      position: relative;
-    }
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+        }
 
-    /* ✅ Constrain the big glow to viewport to avoid horizontal overflow */
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(800px, 100vw);
-      height: min(800px, 100vw);
-      background: radial-gradient(circle, rgba(0, 255, 136, 0.06) 0%, rgba(255, 0, 255, 0.02) 40%, transparent 60%);
-      pointer-events: none;
-    }
+        /* ✅ constrain glow to viewport so it can't create horizontal overflow */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(800px, 100vw);
+            height: min(800px, 100vw);
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.06) 0%, rgba(255, 0, 255, 0.02) 40%, transparent 60%);
+            pointer-events: none;
+        }
 
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.4rem 1rem;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 2.5rem;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeUp 0.4s steps(8) forwards;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      clip-path: polygon(
-        6px 0%, calc(100% - 6px) 0%,
-        100% 6px, 100% calc(100% - 6px),
-        calc(100% - 6px) 100%, 6px 100%,
-        0% calc(100% - 6px), 0% 6px
-      );
-    }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.4rem 1rem;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.4s steps(8) forwards;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            clip-path: polygon(
+                6px 0%, calc(100% - 6px) 0%,
+                100% 6px, 100% calc(100% - 6px),
+                calc(100% - 6px) 100%, 6px 100%,
+                0% calc(100% - 6px), 0% 6px
+            );
+        }
 
-    .hero-badge .dot {
-      width: 7px;
-      height: 7px;
-      background: var(--accent);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-      box-shadow: 0 0 6px var(--accent);
-    }
+        .hero-badge .dot {
+            width: 7px;
+            height: 7px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 6px var(--accent);
+        }
 
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    .hero h1 {
-      font-family: var(--heading);
-      font-size: clamp(2.5rem, 6vw, 4.2rem);
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      line-height: 1.15;
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeUp 0.4s steps(8) 0.1s forwards;
-      position: relative;
-      color: #e0e0e0;
-    }
+        .hero h1 {
+            font-family: var(--heading);
+            font-size: clamp(2.5rem, 6vw, 4.2rem);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.4s steps(8) 0.1s forwards;
+            position: relative;
+            color: #e0e0e0;
+        }
 
-    .hero h1 .line1 {
-      background: linear-gradient(90deg, #a78bfa, #e0e0e0);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero h1 .line2 {
-      background: linear-gradient(90deg, #ff00ff, #ff3366);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero h1 .line3 {
-      background: linear-gradient(90deg, #00ff88, #00d4ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero h1 .line4 {
-      background: linear-gradient(90deg, #00d4ff, #a78bfa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+        .hero h1 .line1 {
+            background: linear-gradient(90deg, #a78bfa, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-    @keyframes chromatic {
-      0%, 100% {
-        text-shadow: 3px -2px 0 rgba(255, 0, 255, 0.35),
+        .hero h1 .line2 {
+            background: linear-gradient(90deg, #ff00ff, #ff3366);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero h1 .line3 {
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero h1 .line4 {
+            background: linear-gradient(90deg, #00d4ff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes chromatic {
+            0%, 100% {
+                text-shadow:
+                    3px -2px 0 rgba(255, 0, 255, 0.35),
                     -3px 2px 0 rgba(0, 212, 255, 0.35);
-      }
-      25% {
-        text-shadow: -2px 3px 0 rgba(255, 0, 255, 0.4),
+            }
+            25% {
+                text-shadow:
+                    -2px 3px 0 rgba(255, 0, 255, 0.4),
                     2px -3px 0 rgba(0, 212, 255, 0.4);
-      }
-      50% {
-        text-shadow: 4px 2px 0 rgba(255, 0, 255, 0.3),
+            }
+            50% {
+                text-shadow:
+                    4px 2px 0 rgba(255, 0, 255, 0.3),
                     -4px -2px 0 rgba(0, 212, 255, 0.3);
-      }
-      75% {
-        text-shadow: -3px -2px 0 rgba(255, 0, 255, 0.4),
+            }
+            75% {
+                text-shadow:
+                    -3px -2px 0 rgba(255, 0, 255, 0.4),
                     3px 2px 0 rgba(0, 212, 255, 0.4);
-      }
-    }
-
-    @keyframes glitch {
-      0%, 92%, 100% { transform: translate(0, 0) skew(0deg); }
-      93% { transform: translate(-4px, 2px) skew(-2deg); }
-      94% { transform: translate(3px, -2px) skew(1deg); }
-      95% { transform: translate(-2px, 3px) skew(-1deg); }
-      96% { transform: translate(4px, -1px) skew(2deg); }
-      97% { transform: translate(0, 0) skew(0deg); }
-    }
-
-    .hero h1 {
-      animation: fadeUp 0.4s steps(8) 0.1s forwards, glitch 6s infinite 1s, chromatic 4s infinite;
-    }
-
-    .terminal-prefix { color: var(--accent); font-weight: 700; }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-    .blink-cursor { color: var(--accent); animation: blink 1s steps(1) infinite; }
-
-    .hero-sub {
-      font-family: var(--body);
-      font-size: clamp(0.85rem, 1.5vw, 1rem);
-      color: var(--text-muted);
-      max-width: 560px;
-      margin-bottom: 2.5rem;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeUp 0.4s steps(8) 0.2s forwards;
-      font-weight: 500;
-    }
-
-    .hero-buttons {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeUp 0.4s steps(8) 0.3s forwards;
-    }
-
-    .btn {
-      padding: 0.75rem 1.8rem;
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.15s;
-      cursor: pointer;
-      border: none;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      clip-path: polygon(
-        10px 0%, calc(100% - 10px) 0%,
-        100% 10px, 100% calc(100% - 10px),
-        calc(100% - 10px) 100%, 10px 100%,
-        0% calc(100% - 10px), 0% 10px
-      );
-    }
-
-    .btn-primary {
-      background: transparent;
-      color: var(--accent);
-      border: 2px solid var(--accent);
-      box-shadow: 0 0 10px rgba(0, 255, 136, 0.2), inset 0 0 10px rgba(0, 255, 136, 0.05);
-    }
-    .btn-primary:hover {
-      background: var(--accent);
-      color: var(--bg);
-      transform: translateY(-2px);
-      box-shadow: 0 0 20px rgba(0, 255, 136, 0.4), 0 0 40px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 255, 136, 0.1);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn-secondary:hover {
-      border-color: var(--accent-tertiary);
-      color: var(--accent-tertiary);
-      box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
-    }
-
-    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
-
-    /* ── SCROLL ANIMATIONS ── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: all 0.35s cubic-bezier(0.0, 0.0, 0.2, 1);
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    .reveal-scale {
-      opacity: 0;
-      transform: scale(0.95);
-      transition: all 0.35s cubic-bezier(0.0, 0.0, 0.2, 1);
-    }
-    .reveal-scale.visible { opacity: 1; transform: scale(1); }
-
-    .stagger-children .reveal:nth-child(1) { transition-delay: 0s; }
-    .stagger-children .reveal:nth-child(2) { transition-delay: 0.08s; }
-    .stagger-children .reveal:nth-child(3) { transition-delay: 0.16s; }
-    .stagger-children .reveal:nth-child(4) { transition-delay: 0.24s; }
-
-    /* ── SECTIONS ── */
-    section { padding: 6rem 2rem; max-width: 1000px; margin: 0 auto; }
-
-    .section-label {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--accent);
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-      text-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
-    }
-
-    .section-title {
-      font-family: var(--heading);
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-      line-height: 1.2;
-    }
-
-    .section-desc {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      max-width: 560px;
-      margin-bottom: 3rem;
-    }
-
-    /* ── SECTION DIVIDER ── */
-    .chalk-line {
-      width: 100%;
-      max-width: 1000px;
-      margin: 0 auto;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--accent) 20%, var(--accent) 80%, transparent);
-      opacity: 0.2;
-      box-shadow: 0 0 8px rgba(0, 255, 136, 0.15);
-    }
-
-    /* ── PROBLEM SECTION ── */
-    .problem-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-
-    .problem-card {
-      padding: 2rem;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      position: relative;
-      clip-path: polygon(
-        12px 0%, calc(100% - 12px) 0%,
-        100% 12px, 100% calc(100% - 12px),
-        calc(100% - 12px) 100%, 12px 100%,
-        0% calc(100% - 12px), 0% 12px
-      );
-      transition: all 0.2s;
-    }
-
-    .problem-card:hover { box-shadow: 0 0 15px rgba(0, 255, 136, 0.1); }
-
-    .problem-card.old { opacity: 0.75; }
-    .problem-card.old p { color: var(--text); }
-
-    .problem-card.old .glitch-strike {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 2;
-      overflow: hidden;
-      --strike-angle: 25deg;
-    }
-
-    .problem-card.old .glitch-strike::before,
-    .problem-card.old .glitch-strike::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 140%;
-      height: 3px;
-      background: var(--destructive);
-      box-shadow: 0 0 10px var(--destructive), 0 0 20px rgba(255, 51, 102, 0.3);
-      opacity: 0;
-      transform-origin: center center;
-    }
-
-    .problem-card.old .glitch-strike::before {
-      transform: translate(-50%, -50%) rotate(var(--strike-angle));
-    }
-    .problem-card.old .glitch-strike::after {
-      transform: translate(-50%, -50%) rotate(calc(-1 * var(--strike-angle)));
-    }
-
-    .problem-card.old.visible .glitch-strike::before {
-      opacity: 0.8;
-      animation: strikeSlash 0.3s steps(4) 0.3s forwards;
-    }
-
-    .problem-card.old.visible .glitch-strike::after {
-      opacity: 0.8;
-      animation: strikeSlash 0.3s steps(4) 0.5s forwards;
-    }
-
-    @keyframes strikeSlash {
-      0% { opacity: 0; }
-      50% { opacity: 0.5; }
-      100% { opacity: 0.8; }
-    }
-
-    .problem-card.old .card-label { color: var(--text-muted); }
-
-    .problem-card.new {
-      border-color: var(--accent);
-      box-shadow: 0 0 10px rgba(0, 255, 136, 0.1), inset 0 0 10px rgba(0, 255, 136, 0.03);
-    }
-
-    .problem-card.new .card-label { color: var(--accent); }
-
-    .card-label {
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-
-    .problem-card h3 {
-      font-family: var(--heading);
-      font-size: 1.05rem;
-      margin-bottom: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-    }
-
-    .problem-card p {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-
-    /* ── COUNTER ── */
-    .counter-section {
-      padding: 5rem 2rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .counter-row {
-      display: flex;
-      justify-content: center;
-      gap: 4rem;
-      flex-wrap: wrap;
-    }
-
-    .counter-row-label {
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .counter-row-label.old { color: var(--text-muted); }
-    .counter-row-label.new { color: var(--accent); text-shadow: 0 0 8px rgba(0, 255, 136, 0.3); }
-
-    .counter-divider {
-      width: 120px;
-      height: 1px;
-      background: var(--border);
-      margin: 2.5rem auto;
-      position: relative;
-      box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
-    }
-
-    .counter-divider::after {
-      content: 'vs';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--bg);
-      padding: 0 1rem;
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--accent-secondary);
-      letter-spacing: 0.1em;
-      text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
-    }
-
-    .counter-item { text-align: center; }
-
-    .counter-num {
-      font-family: var(--mono);
-      font-size: 3rem;
-      font-weight: 700;
-      letter-spacing: -0.05em;
-      color: var(--text-muted);
-    }
-
-    .counter-num.accent {
-      color: var(--accent);
-      font-size: 3.5rem;
-      text-shadow: 0 0 15px rgba(0, 255, 136, 0.4), 0 0 30px rgba(0, 255, 136, 0.2);
-    }
-
-    .counter-label {
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    /* ── WHAT YOU BUILD - TERMINAL CARDS ── */
-    .build-items {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .build-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0;
-      transition: all 0.2s;
-      position: relative;
-      clip-path: polygon(
-        12px 0%, calc(100% - 12px) 0%,
-        100% 12px, 100% calc(100% - 12px),
-        calc(100% - 12px) 100%, 12px 100%,
-        0% calc(100% - 12px), 0% 12px
-      );
-    }
-
-    .build-card .terminal-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 0.6rem 1rem;
-      background: var(--muted);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .build-card .terminal-dot { width: 8px; height: 8px; border-radius: 50%; }
-    .build-card .terminal-dot.red { background: var(--destructive); }
-    .build-card .terminal-dot.yellow { background: #ffaa00; }
-    .build-card .terminal-dot.green { background: var(--accent); }
-
-    .build-card .terminal-body { padding: 1.5rem 2rem 2rem; }
-
-    .build-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-3px);
-      box-shadow: 0 0 20px rgba(0, 255, 136, 0.15), 0 0 40px rgba(0, 255, 136, 0.05);
-    }
-
-    .build-card .icon {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--accent);
-      margin-bottom: 1rem;
-      display: block;
-      letter-spacing: 0.1em;
-    }
-
-    .build-card h3 {
-      font-family: var(--heading);
-      font-size: 1.05rem;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-    }
-
-    .build-card p { color: var(--text-muted); font-size: 0.85rem; }
-
-    /* ── HOW IT WORKS ── */
-    .steps {
-      display: grid;
-      gap: 0;
-      position: relative;
-    }
-
-    .steps::before {
-      content: '';
-      position: absolute;
-      left: 23px;
-      top: 2rem;
-      bottom: 2rem;
-      width: 1px;
-      background: repeating-linear-gradient(
-        to bottom,
-        var(--accent) 0px,
-        var(--accent) 4px,
-        transparent 4px,
-        transparent 8px
-      );
-      opacity: 0.4;
-      box-shadow: 0 0 6px rgba(0, 255, 136, 0.2);
-    }
-
-    .step {
-      display: grid;
-      grid-template-columns: 48px 1fr;
-      gap: 1.5rem;
-      padding: 2rem 0;
-      align-items: start;
-    }
-
-    .step-number {
-      width: 48px;
-      height: 48px;
-      background: var(--surface);
-      border: 1px solid var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--mono);
-      font-weight: 700;
-      font-size: 0.9rem;
-      color: var(--accent);
-      flex-shrink: 0;
-      position: relative;
-      z-index: 1;
-      box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
-      clip-path: polygon(
-        8px 0%, calc(100% - 8px) 0%,
-        100% 8px, 100% calc(100% - 8px),
-        calc(100% - 8px) 100%, 8px 100%,
-        0% calc(100% - 8px), 0% 8px
-      );
-    }
-
-    .step h3 {
-      font-family: var(--heading);
-      font-size: 1.05rem;
-      margin-bottom: 0.4rem;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-    }
-
-    .step h3::before {
-      content: '> ';
-      color: var(--accent);
-      font-family: var(--mono);
-    }
-
-    .step p { color: var(--text-muted); font-size: 0.85rem; }
-
-    .step-time {
-      display: inline-block;
-      margin-top: 0.5rem;
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      color: var(--accent);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      text-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
-    }
-
-    /* ── PRICING ── */
-    .pricing-card {
-      max-width: 420px;
-      margin: 0 auto;
-      background: var(--surface);
-      border: 1px solid var(--accent);
-      padding: 3rem;
-      text-align: center;
-      position: relative;
-      clip-path: polygon(
-        16px 0%, calc(100% - 16px) 0%,
-        100% 16px, 100% calc(100% - 16px),
-        calc(100% - 16px) 100%, 16px 100%,
-        0% calc(100% - 16px), 0% 16px
-      );
-      box-shadow: 0 0 20px rgba(0, 255, 136, 0.1), 0 0 40px rgba(0, 255, 136, 0.05);
-      backdrop-filter: blur(4px);
-      overflow: hidden;
-    }
-
-    .pricing-card::before,
-    .pricing-card::after {
-      content: '';
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--accent);
-      opacity: 0.5;
-    }
-
-    .pricing-card::before { top: 8px; left: 8px; border-right: none; border-bottom: none; }
-    .pricing-card::after { bottom: 8px; right: 8px; border-left: none; border-top: none; }
-
-    .pricing-label {
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--accent);
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      text-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
-    }
-
-    .pricing-price {
-      font-family: var(--heading);
-      font-size: 3.5rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      margin-bottom: 0.25rem;
-      color: var(--accent);
-      text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-    }
-
-    .pricing-per { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.85rem; }
-
-    .pricing-features { list-style: none; text-align: left; margin-bottom: 2rem; }
-
-    .pricing-features li {
-      padding: 0.6rem 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .pricing-features li::before {
-      content: '>';
-      color: var(--accent);
-      font-family: var(--mono);
-      font-weight: 700;
-      text-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
-    }
-
-    .pricing-btn { width: 100%; padding: 1rem; font-size: 0.85rem; }
-
-    /* ── FAQ ── */
-    .faq-list { max-width: 680px; margin: 0 auto; }
-    .faq-item { border-bottom: 1px solid var(--border); }
-
-    .faq-q {
-      width: 100%;
-      background: none;
-      border: none;
-      color: var(--text);
-      padding: 1.5rem 0;
-      font-family: var(--body);
-      font-size: 0.9rem;
-      font-weight: 500;
-      text-align: left;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .faq-q .prompt-prefix {
-      color: var(--accent);
-      font-family: var(--mono);
-      margin-right: 0.75rem;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .faq-q .arrow {
-      transition: transform 0.2s steps(3);
-      font-family: var(--mono);
-      font-size: 1rem;
-      color: var(--accent);
-      text-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
-    }
-
-    .faq-item.open .faq-q .arrow { transform: rotate(45deg); }
-
-    .faq-a {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.2s steps(6), padding 0.2s steps(6);
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      line-height: 1.7;
-      padding-left: 1.6rem;
-    }
-
-    .faq-item.open .faq-a { max-height: 300px; padding-bottom: 1.5rem; }
-
-    .faq-a::after {
-      content: '_';
-      color: var(--accent);
-      animation: blink 1s steps(2) infinite;
-    }
-
-    /* ── FOOTER ── */
-    footer {
-      text-align: center;
-      padding: 3rem 2rem;
-      border-top: 1px solid var(--border);
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      position: relative;
-      background:
-        linear-gradient(90deg, transparent 49.5%, rgba(0, 255, 136, 0.03) 49.5%, rgba(0, 255, 136, 0.03) 50.5%, transparent 50.5%),
-        linear-gradient(0deg, transparent 49.5%, rgba(0, 255, 136, 0.03) 49.5%, rgba(0, 255, 136, 0.03) 50.5%, transparent 50.5%);
-      background-size: 40px 40px;
-    }
-
-    /* ── SCROLL PROGRESS ── */
-    .scroll-progress {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 2px;
-      background: var(--accent);
-      z-index: 200;
-      width: 0%;
-      transition: width 0.1s;
-      box-shadow: 0 0 8px var(--accent), 0 0 16px rgba(0, 255, 136, 0.3);
-    }
-
-    /* ── FOCUS RINGS ── */
-    *:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-      box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
-    }
-
-    /* ── ACCESSIBILITY: REDUCED MOTION ── */
-    @media (prefers-reduced-motion: reduce) {
-      .hero h1 {
-        animation: fadeUp 0.4s ease 0.1s forwards;
-        text-shadow: none;
-      }
-      .blink-cursor { animation: none; }
-      .faq-a::after { animation: none; }
-      .hero-badge .dot { animation: none; }
-      .reveal { transition: opacity 0.3s ease; transform: none; }
-      .reveal-scale { transition: opacity 0.3s ease; transform: none; }
-      * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-      }
-    }
-
-    /* ── HAMBURGER MENU ── */
-    .nav-hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 8px;
-      background: transparent;
-      border: none;
-
-      /* ✅ Make X visible on “desktop narrow” AND mobile */
-      position: relative;
-      z-index: 10002;
-      flex-shrink: 0;
-    }
-
-    .nav-hamburger span {
-      width: 24px;
-      height: 2px;
-      background: var(--accent);
-      transition: all 0.2s;
-      display: block;
-    }
-
-    .nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
-    .nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 1024px) {
-      .nav-hamburger { display: flex; }
-
-      nav.menu-open {
-        backdrop-filter: none;
-        background: #0a0a0f;
-        z-index: 9999;
-      }
-
-      /* ✅ KEY FIX: fixed + inset prevents 100vw overflow and padding shift */
-      .nav-links {
-        display: none;
-        position: fixed;
-        inset: 0;
-        width: 100%;
-        height: 100vh;
-        height: 100dvh;
-        background: #0a0a0f;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 2.5rem;
-        z-index: 9998;
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        padding: 6rem 2rem 2rem;
-      }
-
-      .nav-links.open { display: flex; }
-      .nav-links a { font-size: 1.1rem; }
-    }
-
-    @media (max-width: 768px) {
-      nav { padding: 0.8rem 1.25rem; }
-      nav.scrolled { padding: 0.5rem 1.25rem; }
-      .problem-grid { grid-template-columns: 1fr; }
-      .counter-row { gap: 2rem; }
-      .counter-num { font-size: 2.2rem; }
-      .counter-num.accent { font-size: 2.5rem; }
-      .hero { min-height: auto; padding-top: 7rem; padding-bottom: 3rem; }
-      .hero h1 { font-size: 2rem; }
-      .step { grid-template-columns: 40px 1fr; gap: 1rem; }
-      .pricing-card { padding: 2rem; }
-      .problem-card.old .glitch-strike { display: none; }
-    }
-  </style>
+            }
+        }
+
+        @keyframes glitch {
+            0%, 92%, 100% { transform: translate(0, 0) skew(0deg); }
+            93% { transform: translate(-4px, 2px) skew(-2deg); }
+            94% { transform: translate(3px, -2px) skew(1deg); }
+            95% { transform: translate(-2px, 3px) skew(-1deg); }
+            96% { transform: translate(4px, -1px) skew(2deg); }
+            97% { transform: translate(0, 0) skew(0deg); }
+        }
+
+        .hero h1 {
+            animation: fadeUp 0.4s steps(8) 0.1s forwards, glitch 6s infinite 1s, chromatic 4s infinite;
+        }
+
+        .terminal-prefix { color: var(--accent); font-weight: 700; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .blink-cursor { color: var(--accent); animation: blink 1s steps(1) infinite; }
+
+        .hero-sub {
+            font-family: var(--body);
+            font-size: clamp(0.85rem, 1.5vw, 1rem);
+            color: var(--text-muted);
+            max-width: 560px;
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.4s steps(8) 0.2s forwards;
+            font-weight: 500;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.4s steps(8) 0.3s forwards;
+        }
+
+        .btn {
+            padding: 0.75rem 1.8rem;
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.15s;
+            cursor: pointer;
+            border: none;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            clip-path: polygon(
+                10px 0%, calc(100% - 10px) 0%,
+                100% 10px, 100% calc(100% - 10px),
+                calc(100% - 10px) 100%, 10px 100%,
+                0% calc(100% - 10px), 0% 10px
+            );
+        }
+
+        .btn-primary {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2), inset 0 0 10px rgba(0, 255, 136, 0.05);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            color: var(--bg);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4), 0 0 40px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 255, 136, 0.1);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-tertiary);
+            color: var(--accent-tertiary);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* ── SCROLL ANIMATIONS ── */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.35s cubic-bezier(0.0, 0.0, 0.2, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        .reveal-scale { opacity: 0; transform: scale(0.95); transition: all 0.35s cubic-bezier(0.0, 0.0, 0.2, 1); }
+        .reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+        .stagger-children .reveal:nth-child(1) { transition-delay: 0s; }
+        .stagger-children .reveal:nth-child(2) { transition-delay: 0.08s; }
+        .stagger-children .reveal:nth-child(3) { transition-delay: 0.16s; }
+        .stagger-children .reveal:nth-child(4) { transition-delay: 0.24s; }
+
+        /* ── SECTIONS ── */
+        section { padding: 6rem 2rem; max-width: 1000px; margin: 0 auto; }
+
+        .section-label {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+        }
+
+        .section-title {
+            font-family: var(--heading);
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .section-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin-bottom: 3rem;
+        }
+
+        /* ── SECTION DIVIDER ── */
+        .chalk-line {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--accent) 20%, var(--accent) 80%, transparent);
+            opacity: 0.2;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.15);
+        }
+
+        /* ── PROBLEM SECTION ── */
+        .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+
+        .problem-card {
+            padding: 2rem;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            position: relative;
+            clip-path: polygon(
+                12px 0%, calc(100% - 12px) 0%,
+                100% 12px, 100% calc(100% - 12px),
+                calc(100% - 12px) 100%, 12px 100%,
+                0% calc(100% - 12px), 0% 12px
+            );
+            transition: all 0.2s;
+        }
+
+        .problem-card:hover { box-shadow: 0 0 15px rgba(0, 255, 136, 0.1); }
+
+        .problem-card.old { opacity: 0.75; }
+        .problem-card.old p { color: var(--text); }
+
+        /* Glitch strikethrough for old card */
+        .problem-card.old .glitch-strike {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+            --strike-angle: 25deg;
+        }
+
+        .problem-card.old .glitch-strike::before,
+        .problem-card.old .glitch-strike::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 140%;
+            height: 3px;
+            background: var(--destructive);
+            box-shadow: 0 0 10px var(--destructive), 0 0 20px rgba(255, 51, 102, 0.3);
+            opacity: 0;
+            transform-origin: center center;
+        }
+
+        .problem-card.old .glitch-strike::before { transform: translate(-50%, -50%) rotate(var(--strike-angle)); }
+        .problem-card.old .glitch-strike::after { transform: translate(-50%, -50%) rotate(calc(-1 * var(--strike-angle))); }
+
+        .problem-card.old.visible .glitch-strike::before {
+            opacity: 0.8;
+            animation: strikeSlash 0.3s steps(4) 0.3s forwards;
+        }
+
+        .problem-card.old.visible .glitch-strike::after {
+            opacity: 0.8;
+            animation: strikeSlash 0.3s steps(4) 0.5s forwards;
+        }
+
+        @keyframes strikeSlash { 0% { opacity: 0; } 50% { opacity: 0.5; } 100% { opacity: 0.8; } }
+
+        .problem-card.old .card-label { color: var(--text-muted); }
+
+        .problem-card.new {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.1), inset 0 0 10px rgba(0, 255, 136, 0.03);
+        }
+
+        .problem-card.new .card-label { color: var(--accent); }
+
+        .card-label {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .problem-card h3 {
+            font-family: var(--heading);
+            font-size: 1.05rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .problem-card p { color: var(--text-muted); font-size: 0.85rem; }
+
+        /* ── COUNTER ── */
+        .counter-section { padding: 5rem 2rem; max-width: 900px; margin: 0 auto; }
+
+        .counter-row {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .counter-row-label {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .counter-row-label.old { color: var(--text-muted); }
+        .counter-row-label.new { color: var(--accent); text-shadow: 0 0 8px rgba(0, 255, 136, 0.3); }
+
+        .counter-divider {
+            width: 120px;
+            height: 1px;
+            background: var(--border);
+            margin: 2.5rem auto;
+            position: relative;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
+        }
+
+        .counter-divider::after {
+            content: 'vs';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg);
+            padding: 0 1rem;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            color: var(--accent-secondary);
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+
+        .counter-item { text-align: center; min-width: 0; }
+
+        /* ✅ reduce layout shift as digits grow */
+        .counter-num { 
+            font-family: var(--mono);
+            font-variant-numeric: tabular-nums;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .counter-num.accent {
+            color: var(--accent);
+            font-size: 3.5rem;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.4), 0 0 30px rgba(0, 255, 136, 0.2);
+        }
+
+        .counter-label {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* ── WHAT YOU BUILD - TERMINAL CARDS ── */
+        .build-items { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+
+        .build-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0;
+            transition: all 0.2s;
+            position: relative;
+            clip-path: polygon(
+                12px 0%, calc(100% - 12px) 0%,
+                100% 12px, 100% calc(100% - 12px),
+                calc(100% - 12px) 100%, 12px 100%,
+                0% calc(100% - 12px), 0% 12px
+            );
+        }
+
+        .build-card .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.6rem 1rem;
+            background: var(--muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .build-card .terminal-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .build-card .terminal-dot.red { background: var(--destructive); }
+        .build-card .terminal-dot.yellow { background: #ffaa00; }
+        .build-card .terminal-dot.green { background: var(--accent); }
+
+        .build-card .terminal-body { padding: 1.5rem 2rem 2rem; }
+
+        .build-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.15), 0 0 40px rgba(0, 255, 136, 0.05);
+        }
+
+        .build-card .icon {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: block;
+            letter-spacing: 0.1em;
+        }
+
+        .build-card h3 {
+            font-family: var(--heading);
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .build-card p { color: var(--text-muted); font-size: 0.85rem; }
+
+        .build-card .tag {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.2rem 0.6rem;
+            background: var(--accent-dim);
+            color: var(--accent);
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            clip-path: polygon(
+                4px 0%, calc(100% - 4px) 0%,
+                100% 4px, 100% calc(100% - 4px),
+                calc(100% - 4px) 100%, 4px 100%,
+                0% calc(100% - 4px), 0% 4px
+            );
+        }
+
+        /* ── HOW IT WORKS - TERMINAL/HACKER FEEL ── */
+        .steps { display: grid; gap: 0; position: relative; }
+
+        .steps::before {
+            content: '';
+            position: absolute;
+            left: 23px;
+            top: 2rem;
+            bottom: 2rem;
+            width: 1px;
+            background: repeating-linear-gradient(
+                to bottom,
+                var(--accent) 0px,
+                var(--accent) 4px,
+                transparent 4px,
+                transparent 8px
+            );
+            opacity: 0.4;
+            box-shadow: 0 0 6px rgba(0, 255, 136, 0.2);
+        }
+
+        .step {
+            display: grid;
+            grid-template-columns: 48px 1fr;
+            gap: 1.5rem;
+            padding: 2rem 0;
+            align-items: start;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--surface);
+            border: 1px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--accent);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+            clip-path: polygon(
+                8px 0%, calc(100% - 8px) 0%,
+                100% 8px, 100% calc(100% - 8px),
+                calc(100% - 8px) 100%, 8px 100%,
+                0% calc(100% - 8px), 0% 8px
+            );
+        }
+
+        .step h3 {
+            font-family: var(--heading);
+            font-size: 1.05rem;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .step h3::before { content: '> '; color: var(--accent); font-family: var(--mono); }
+
+        .step p { color: var(--text-muted); font-size: 0.85rem; }
+
+        .step-time {
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
+        }
+
+        /* ── PRICING - HOLOGRAPHIC CARD ── */
+        .pricing-card {
+            max-width: 420px;
+            margin: 0 auto;
+            background: var(--surface);
+            border: 1px solid var(--accent);
+            padding: 3rem;
+            text-align: center;
+            position: relative;
+            clip-path: polygon(
+                16px 0%, calc(100% - 16px) 0%,
+                100% 16px, 100% calc(100% - 16px),
+                calc(100% - 16px) 100%, 16px 100%,
+                0% calc(100% - 16px), 0% 16px
+            );
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1), 0 0 40px rgba(0, 255, 136, 0.05);
+            backdrop-filter: blur(4px);
+            overflow: hidden;
+        }
+
+        .pricing-card::before,
+        .pricing-card::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--accent);
+            opacity: 0.5;
+        }
+
+        .pricing-card::before { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+        .pricing-card::after { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+        .pricing-label {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+        }
+
+        .pricing-price {
+            font-family: var(--heading);
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            margin-bottom: 0.25rem;
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .pricing-per { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.85rem; }
+
+        .pricing-features { list-style: none; text-align: left; margin-bottom: 2rem; }
+
+        .pricing-features li {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .pricing-features li::before {
+            content: '>';
+            color: var(--accent);
+            font-family: var(--mono);
+            font-weight: 700;
+            text-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
+        }
+
+        .pricing-btn { width: 100%; padding: 1rem; font-size: 0.85rem; }
+
+        /* ── FAQ - TERMINAL STYLE ── */
+        .faq-list { max-width: 680px; margin: 0 auto; }
+
+        .faq-item { border-bottom: 1px solid var(--border); }
+
+        .faq-q {
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text);
+            padding: 1.5rem 0;
+            font-family: var(--body);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-q .prompt-prefix {
+            color: var(--accent);
+            font-family: var(--mono);
+            margin-right: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .faq-q .arrow {
+            transition: transform 0.2s steps(3);
+            font-family: var(--mono);
+            font-size: 1rem;
+            color: var(--accent);
+            text-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
+        }
+
+        .faq-item.open .faq-q .arrow { transform: rotate(45deg); }
+
+        .faq-a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s steps(6), padding 0.2s steps(6);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.7;
+            padding-left: 1.6rem;
+        }
+
+        .faq-item.open .faq-a { max-height: 300px; padding-bottom: 1.5rem; }
+
+        .faq-a::after { content: '_'; color: var(--accent); animation: blink 1s steps(2) infinite; }
+
+        /* ── FOOTER - CIRCUIT PATTERN ── */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            position: relative;
+            background:
+                linear-gradient(90deg, transparent 49.5%, rgba(0, 255, 136, 0.03) 49.5%, rgba(0, 255, 136, 0.03) 50.5%, transparent 50.5%),
+                linear-gradient(0deg, transparent 49.5%, rgba(0, 255, 136, 0.03) 49.5%, rgba(0, 255, 136, 0.03) 50.5%, transparent 50.5%);
+            background-size: 40px 40px;
+        }
+
+        footer a { color: var(--accent); text-decoration: none; font-family: var(--mono); font-size: 0.8rem; }
+
+        /* ── INSTRUCTOR BIO - HOLOGRAPHIC ── */
+        .instructor {
+            max-width: 560px;
+            margin: 0 auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            position: relative;
+            clip-path: polygon(
+                14px 0%, calc(100% - 14px) 0%,
+                100% 14px, 100% calc(100% - 14px),
+                calc(100% - 14px) 100%, 14px 100%,
+                0% calc(100% - 14px), 0% 14px
+            );
+            backdrop-filter: blur(4px);
+            transition: all 0.2s;
+        }
+
+        .instructor:hover {
+            border-color: var(--accent-tertiary);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1), 0 0 40px rgba(0, 212, 255, 0.05);
+        }
+
+        .instructor::before,
+        .instructor::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--accent-tertiary);
+            opacity: 0.4;
+        }
+
+        .instructor::before { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+        .instructor::after { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+
+        .instructor-info h3 {
+            font-family: var(--heading);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.15rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .instructor-info .instructor-title {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
+        }
+
+        .instructor-info p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .instructor-linkedin {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            transition: color 0.15s;
+        }
+
+        .instructor-linkedin:hover {
+            color: var(--accent-tertiary);
+            text-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+        }
+
+        .instructor-linkedin svg { width: 16px; height: 16px; fill: currentColor; }
+
+        /* ── PRICING STRIKETHROUGH ── */
+        .pricing-original {
+            font-family: var(--mono);
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            text-decoration: line-through;
+            opacity: 0.5;
+            margin-bottom: 0.25rem;
+        }
+
+        .pricing-save {
+            display: inline-block;
+            margin-top: 0.75rem;
+            padding: 0.3rem 0.8rem;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--accent);
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            clip-path: polygon(
+                4px 0%, calc(100% - 4px) 0%,
+                100% 4px, 100% calc(100% - 4px),
+                calc(100% - 4px) 100%, 4px 100%,
+                0% calc(100% - 4px), 0% 4px
+            );
+        }
+
+        /* ── SCROLL PROGRESS ── */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: var(--accent);
+            z-index: 200;
+            width: 0%;
+            transition: width 0.1s;
+            box-shadow: 0 0 8px var(--accent), 0 0 16px rgba(0, 255, 136, 0.3);
+        }
+
+        /* ── FOCUS RINGS ── */
+        *:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        /* ── ACCESSIBILITY: REDUCED MOTION ── */
+        @media (prefers-reduced-motion: reduce) {
+            .hero h1 { animation: fadeUp 0.4s ease 0.1s forwards; text-shadow: none; }
+            .blink-cursor { animation: none; }
+            .faq-a::after { animation: none; }
+            .hero-badge .dot { animation: none; }
+            .reveal { transition: opacity 0.3s ease; transform: none; }
+            .reveal-scale { transition: opacity 0.3s ease; transform: none; }
+            * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+        }
+
+        /* ── HAMBURGER MENU ── */
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            background: transparent;
+            border: none;
+
+            /* ✅ ensure X stays above overlay on ALL narrow widths */
+            position: relative;
+            z-index: 10002;
+            flex-shrink: 0;
+        }
+
+        .nav-hamburger span {
+            width: 24px;
+            height: 2px;
+            background: var(--accent);
+            transition: all 0.2s;
+            display: block;
+        }
+
+        .nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+        .nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+            .nav-hamburger { display: flex; }
+
+            nav.menu-open {
+                backdrop-filter: none;
+                background: #0a0a0f;
+                z-index: 9999;
+            }
+
+            /* ✅ fixed + inset prevents right-side overflow from 100vw + nav padding */
+            .nav-links {
+                display: none;
+                position: fixed;
+                inset: 0;
+                width: 100%;
+                height: 100vh;
+                height: 100dvh;
+                background: #0a0a0f;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2.5rem;
+                z-index: 9998;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                padding: 6rem 2rem 2rem;
+            }
+
+            .nav-links.open { display: flex; }
+            .nav-links a { font-size: 1.1rem; }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 0.8rem 1.25rem; }
+            nav.scrolled { padding: 0.5rem 1.25rem; }
+            .problem-grid { grid-template-columns: 1fr; }
+
+            /* ✅ make counter layout stable on mobile (no sudden wrap mid-animation) */
+            .counter-row {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 1.25rem;
+                align-items: start;
+                justify-items: center;
+            }
+            .counter-num { font-size: clamp(1.7rem, 8.5vw, 2.2rem); }
+            .counter-num.accent { font-size: clamp(2.0rem, 9vw, 2.5rem); }
+            .counter-label { font-size: 0.6rem; }
+
+            .hero { min-height: auto; padding-top: 7rem; padding-bottom: 3rem; }
+            .hero h1 { font-size: 2rem; }
+            .step { grid-template-columns: 40px 1fr; gap: 1rem; }
+            .pricing-card { padding: 2rem; }
+
+            /* ✅ DO NOT hide the red X on mobile anymore */
+            /* (removed old rule: .problem-card.old .glitch-strike { display:none; }) */
+
+            .instructor { padding: 1.5rem; }
+        }
+    </style>
 </head>
-
 <body>
-  <div class="scroll-progress" id="scrollProgress"></div>
 
-  <!-- NAV -->
-  <nav id="nav">
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- NAV -->
+<nav id="nav">
     <div class="nav-logo">ship<span>yard</span></div>
 
     <ul class="nav-links" id="navLinks">
-      <li><a href="#about">about</a></li>
-      <li><a href="#build">what you build</a></li>
-      <li><a href="#how">how it works</a></li>
-      <li><a href="#instructor">instructor</a></li>
-      <li><a href="#pricing">pricing</a></li>
-      <li><a href="#faq">faq</a></li>
-      <li><a href="#contact" class="nav-cta">get started</a></li>
+        <li><a href="#about">about</a></li>
+        <li><a href="#build">what you build</a></li>
+        <li><a href="#how">how it works</a></li>
+        <li><a href="#instructor">instructor</a></li>
+        <li><a href="#pricing">pricing</a></li>
+        <li><a href="#faq">faq</a></li>
+        <li><a href="#contact" class="nav-cta">get started</a></li>
     </ul>
 
+    <!-- ✅ use a real button; JS handles open/close + scroll lock -->
     <button class="nav-hamburger" id="navHamburger" type="button"
             aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
-      <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
     </button>
-  </nav>
+</nav>
 
-  <!-- HERO -->
-  <section class="hero">
+<!-- HERO -->
+<section class="hero">
     <div class="hero-badge">
-      <span class="dot"></span>
-      available through select counselors
+        <span class="dot"></span>
+        available through select counselors
     </div>
-    <h1>
-      <span class="line1">Learn to build</span><br>
-      <span class="line2">with AI.</span><br>
-      <span class="line3">Leave with</span><br>
-      <span class="line4">the proof.</span>
-    </h1>
-    <p class="hero-sub">
-      <span class="terminal-prefix">&gt;</span>
-      A 90-minute Zoom workshop where high school students use real developer tools and AI to build and deploy a live portfolio website and working app. No coding experience needed.
-      <span class="blink-cursor">_</span>
-    </p>
+    <h1><span class="line1">Learn to build</span><br><span class="line2">with AI.</span><br><span class="line3">Leave with</span><br><span class="line4">the proof.</span></h1>
+    <p class="hero-sub"><span class="terminal-prefix">&gt;</span> A 90-minute Zoom workshop where high school students use real developer tools and AI to build and deploy a live portfolio website and working app. No coding experience needed.<span class="blink-cursor">_</span></p>
     <div class="hero-buttons">
-      <a href="#pricing" class="btn btn-primary">Learn more</a>
-      <a href="#how" class="btn btn-secondary">See how it works</a>
+        <a href="#pricing" class="btn btn-primary">Learn more</a>
+        <a href="#how" class="btn btn-secondary">See how it works</a>
     </div>
-  </section>
+</section>
 
-  <div class="chalk-line"></div>
+<div class="chalk-line"></div>
 
-  <!-- PROBLEM -->
-  <section id="about">
+<!-- PROBLEM -->
+<section id="about">
     <div class="reveal">
-      <p class="section-label">// the landscape</p>
-      <h2 class="section-title">AI changed what it means<br>to build things.</h2>
-      <p class="section-desc">You used to need years of training to write code and ship a product. Now you need to know how to direct AI to do it. That's a different skill, and most people don't have it yet.</p>
+        <p class="section-label">// the landscape</p>
+        <h2 class="section-title">AI changed what it means<br>to build things.</h2>
+        <p class="section-desc">You used to need years of training to write code and ship a product. Now you need to know how to direct AI to do it. That's a different skill, and most people don't have it yet.</p>
     </div>
 
     <div class="problem-grid stagger-children">
-      <div class="problem-card old reveal">
-        <p class="card-label">the old way to learn to build</p>
-        <h3>3 months. $15K. A coding bootcamp.</h3>
-        <p>Bootcamps teach you to write code line by line. But AI can now write a full working app in minutes. The skill that matters isn't writing code. It's knowing how to direct AI to build what you want.</p>
-        <div class="glitch-strike"></div>
-      </div>
-
-      <div class="problem-card new reveal">
-        <p class="card-label">the new way</p>
-        <h3>90 minutes. $300. Build and ship with AI.</h3>
-        <p>Learn to direct AI to create real projects, the same way professionals are working right now. Walk away with live portfolio pieces no matter what career or college path you choose.</p>
-      </div>
+        <div class="problem-card old reveal">
+            <p class="card-label">the old way to learn to build</p>
+            <h3>3 months. $15K. A coding bootcamp.</h3>
+            <p>Bootcamps teach you to write code line by line. But AI can now write a full working app in minutes. The skill that matters isn't writing code. It's knowing how to direct AI to build what you want.</p>
+            <div class="glitch-strike"></div>
+        </div>
+        <div class="problem-card new reveal">
+            <p class="card-label">the new way</p>
+            <h3>90 minutes. $300. Build and ship with AI.</h3>
+            <p>Learn to direct AI to create real projects, the same way professionals are working right now. Walk away with live portfolio pieces no matter what career or college path you choose.</p>
+        </div>
     </div>
-  </section>
+</section>
 
-  <!-- COUNTER -->
-  <div class="counter-section">
+<!-- COUNTER -->
+<div class="counter-section">
     <p class="counter-row-label old reveal">coding bootcamp</p>
     <div class="counter-row">
-      <div class="counter-item reveal">
-        <div class="counter-num" data-target="3">0</div>
-        <div class="counter-label">months</div>
-      </div>
-      <div class="counter-item reveal">
-        <div class="counter-num" data-target="15" data-prefix="$" data-suffix="K">0</div>
-        <div class="counter-label">average cost</div>
-      </div>
-      <div class="counter-item reveal">
-        <div class="counter-num" data-target="0">0</div>
-        <div class="counter-label">projects shipped on day 1</div>
-      </div>
+        <div class="counter-item reveal">
+            <div class="counter-num" data-target="3">0</div>
+            <div class="counter-label">months</div>
+        </div>
+        <div class="counter-item reveal">
+            <div class="counter-num" data-target="15" data-prefix="$" data-suffix="K">0</div>
+            <div class="counter-label">average cost</div>
+        </div>
+        <div class="counter-item reveal">
+            <div class="counter-num" data-target="0">0</div>
+            <div class="counter-label">projects shipped on day 1</div>
+        </div>
     </div>
 
     <div class="counter-divider reveal"></div>
 
     <p class="counter-row-label new reveal">shipyard</p>
     <div class="counter-row">
-      <div class="counter-item reveal">
-        <div class="counter-num accent" data-target="90">0</div>
-        <div class="counter-label">minutes</div>
-      </div>
-      <div class="counter-item reveal">
-        <div class="counter-num accent" data-target="300" data-prefix="$">0</div>
-        <div class="counter-label">one time</div>
-      </div>
-      <div class="counter-item reveal">
-        <div class="counter-num accent" data-target="2">0</div>
-        <div class="counter-label">live projects shipped</div>
-      </div>
+        <div class="counter-item reveal">
+            <div class="counter-num accent" data-target="90">0</div>
+            <div class="counter-label">minutes</div>
+        </div>
+        <div class="counter-item reveal">
+            <div class="counter-num accent" data-target="300" data-prefix="$">0</div>
+            <div class="counter-label">one time</div>
+        </div>
+        <div class="counter-item reveal">
+            <div class="counter-num accent" data-target="2">0</div>
+            <div class="counter-label">live projects shipped</div>
+        </div>
     </div>
-  </div>
+</div>
 
-  <div class="chalk-line"></div>
+<div class="chalk-line"></div>
 
-  <!-- WHAT YOU BUILD -->
-  <section id="build">
+<!-- WHAT YOU BUILD -->
+<section id="build">
     <div class="reveal">
-      <p class="section-label">// what you build</p>
-      <h2 class="section-title">You leave with<br>working projects.</h2>
-      <p class="section-desc">Everything you build is live on the internet by the end of the session. These are starting points. You'll probably build cooler stuff than our examples.</p>
+        <p class="section-label">// what you build</p>
+        <h2 class="section-title">You leave with<br>working projects.</h2>
+        <p class="section-desc">Everything you build is live on the internet by the end of the session. These are starting points. You'll probably build cooler stuff than our examples.</p>
     </div>
 
     <div class="build-items stagger-children">
-      <div class="build-card reveal">
-        <div class="terminal-header">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
+        <div class="build-card reveal">
+            <div class="terminal-header">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+            </div>
+            <div class="terminal-body">
+                <span class="icon">[ 01 ]</span>
+                <h3>Personal Portfolio Site</h3>
+                <p>A personal website at your own URL. You decide how it looks and what it says. AI builds it to your specifications.</p>
+            </div>
         </div>
-        <div class="terminal-body">
-          <span class="icon">[ 01 ]</span>
-          <h3>Personal Portfolio Site</h3>
-          <p>A personal website at your own URL. You decide how it looks and what it says. AI builds it to your specifications.</p>
+        <div class="build-card reveal">
+            <div class="terminal-header">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+            </div>
+            <div class="terminal-body">
+                <span class="icon">[ 02 ]</span>
+                <h3>AI-Powered Micro-App</h3>
+                <p>A working web app that solves a real problem. Study buddy, debate prep tool, workout generator, or your own idea.</p>
+            </div>
         </div>
-      </div>
-
-      <div class="build-card reveal">
-        <div class="terminal-header">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
+        <div class="build-card reveal">
+            <div class="terminal-header">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+            </div>
+            <div class="terminal-body">
+                <span class="icon">[ 03 ]</span>
+                <h3>Connected Portfolio</h3>
+                <p>Your site links to your app, your app credits you as the builder. One portfolio with real work in it.</p>
+            </div>
         </div>
-        <div class="terminal-body">
-          <span class="icon">[ 02 ]</span>
-          <h3>AI-Powered Micro-App</h3>
-          <p>A working web app that solves a real problem. Study buddy, debate prep tool, workout generator, or your own idea.</p>
-        </div>
-      </div>
-
-      <div class="build-card reveal">
-        <div class="terminal-header">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-        </div>
-        <div class="terminal-body">
-          <span class="icon">[ 03 ]</span>
-          <h3>Connected Portfolio</h3>
-          <p>Your site links to your app, your app credits you as the builder. One portfolio with real work in it.</p>
-        </div>
-      </div>
     </div>
-  </section>
+</section>
 
-  <!-- HOW IT WORKS -->
-  <section id="how">
+<!-- HOW IT WORKS -->
+<section id="how">
     <div class="reveal">
-      <p class="section-label">// how it works</p>
-      <h2 class="section-title">Here's what happens<br>in 90 minutes.</h2>
+        <p class="section-label">// how it works</p>
+        <h2 class="section-title">Here's what happens<br>in 90 minutes.</h2>
     </div>
 
     <div class="steps stagger-children">
-      <div class="step reveal">
-        <div class="step-number">01</div>
-        <div>
-          <h3>Context + Setup</h3>
-          <p>A quick look at how AI is changing the way people build software. Then you open your code editor and fire up a coding agent.</p>
-          <span class="step-time">// 10 min</span>
+        <div class="step reveal">
+            <div class="step-number">01</div>
+            <div>
+                <h3>Context + Setup</h3>
+                <p>A quick look at how AI is changing the way people build software. Then you open your code editor and fire up a coding agent.</p>
+                <span class="step-time">// 10 min</span>
+            </div>
         </div>
-      </div>
-
-      <div class="step reveal">
-        <div class="step-number">02</div>
-        <div>
-          <h3>Build Your Website</h3>
-          <p>You direct a coding agent to create a personal portfolio site. It writes real files on your computer. You make design decisions, iterate, and deploy it live.</p>
-          <span class="step-time">// 25 min</span>
+        <div class="step reveal">
+            <div class="step-number">02</div>
+            <div>
+                <h3>Build Your Website</h3>
+                <p>You direct a coding agent to create a personal portfolio site. It writes real files on your computer. You make design decisions, iterate, and deploy it live.</p>
+                <span class="step-time">// 25 min</span>
+            </div>
         </div>
-      </div>
-
-      <div class="step reveal">
-        <div class="step-number">03</div>
-        <div>
-          <h3>Build Your App</h3>
-          <p>Pick a project or pitch your own. Build a working tool with real project files, then deploy it and link it to your portfolio.</p>
-          <span class="step-time">// 35 min</span>
+        <div class="step reveal">
+            <div class="step-number">03</div>
+            <div>
+                <h3>Build Your App</h3>
+                <p>Pick a project or pitch your own. Build a working tool with real project files, then deploy it and link it to your portfolio.</p>
+                <span class="step-time">// 35 min</span>
+            </div>
         </div>
-      </div>
-
-      <div class="step reveal">
-        <div class="step-number">04</div>
-        <div>
-          <h3>Review + Next Steps</h3>
-          <p>We walk through the skills you just practiced — prompt engineering, project structure, debugging, deployment — and how to keep building on your own.</p>
-          <span class="step-time">// 20 min</span>
+        <div class="step reveal">
+            <div class="step-number">04</div>
+            <div>
+                <h3>Review + Next Steps</h3>
+                <p>We walk through the skills you just practiced — prompt engineering, project structure, debugging, deployment — and how to keep building on your own.</p>
+                <span class="step-time">// 20 min</span>
+            </div>
         </div>
-      </div>
     </div>
-  </section>
+</section>
 
-  <!-- INSTRUCTOR -->
-  <section id="instructor">
+<!-- INSTRUCTOR -->
+<section id="instructor">
     <div class="reveal" style="text-align: center; margin-bottom: 3rem;">
-      <p class="section-label">// your instructor</p>
-      <h2 class="section-title">Learn from someone<br>who builds for a living.</h2>
+        <p class="section-label">// your instructor</p>
+        <h2 class="section-title">Learn from someone<br>who builds for a living.</h2>
     </div>
 
-    <div class="instructor reveal" style="max-width:560px;margin:0 auto;background:var(--surface);border:1px solid var(--border);padding:2.5rem;position:relative;clip-path:polygon(14px 0%, calc(100% - 14px) 0%, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0% calc(100% - 14px), 0% 14px);backdrop-filter:blur(4px);transition:all 0.2s;">
-      <div class="instructor-info">
-        <h3 style="font-family:var(--heading);font-size:1.3rem;font-weight:700;margin-bottom:0.15rem;letter-spacing:0.04em;text-transform:uppercase;">Caleb Lee</h3>
-        <p style="font-family:var(--mono);font-size:0.7rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:1rem;text-shadow:0 0 6px rgba(0,255,136,0.3);">
-          Forbes 30 Under 30 // Harvard '17
-        </p>
-        <p style="color:var(--text-muted);font-size:0.85rem;line-height:1.7;margin-bottom:1rem;">
-          Caleb co-founded Bandana, a hiring platform for 80 million hourly workers that launched nationally out of NYC. He now runs special projects at Protege, an AI data platform for model builders. He works at the intersection of AI and product every day, and teaches the way he builds: fast, practical, and focused on shipping.
-        </p>
-        <a href="https://www.linkedin.com/in/calebylee/" target="_blank" rel="noopener"
-           style="display:inline-flex;align-items:center;gap:0.4rem;color:var(--text-muted);text-decoration:none;font-family:var(--mono);font-size:0.75rem;transition:color 0.15s;">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;">
-            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-          </svg>
-          LinkedIn
-        </a>
-      </div>
+    <div class="instructor reveal">
+        <div class="instructor-info">
+            <h3>Caleb Lee</h3>
+            <p class="instructor-title">Forbes 30 Under 30 // Harvard '17</p>
+            <p>Caleb co-founded Bandana, a hiring platform for 80 million hourly workers that launched nationally out of NYC. He now runs special projects at Protege, an AI data platform for model builders. He works at the intersection of AI and product every day, and teaches the way he builds: fast, practical, and focused on shipping.</p>
+            <a href="https://www.linkedin.com/in/calebylee/" target="_blank" rel="noopener" class="instructor-linkedin">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                LinkedIn
+            </a>
+        </div>
     </div>
-  </section>
+</section>
 
-  <div class="chalk-line"></div>
+<div class="chalk-line"></div>
 
-  <!-- PRICING -->
-  <section id="pricing">
+<!-- PRICING -->
+<section id="pricing">
     <div class="reveal" style="text-align: center;">
-      <p class="section-label">// pricing</p>
-      <h2 class="section-title">90 minutes.<br>Two live projects.</h2>
-      <p class="section-desc" style="margin: 1rem auto 3rem;">Everything included. No subscriptions or upsells.</p>
+        <p class="section-label">// pricing</p>
+        <h2 class="section-title">90 minutes.<br>Two live projects.</h2>
+        <p class="section-desc" style="margin: 1rem auto 3rem;">Everything included. No subscriptions or upsells.</p>
     </div>
 
     <div class="pricing-card reveal-scale">
-      <p class="pricing-label">workshop</p>
-      <p style="font-family:var(--mono);font-size:1.4rem;color:var(--text-muted);text-decoration:line-through;opacity:0.5;margin-bottom:0.25rem;">$350</p>
-      <p class="pricing-price">$300</p>
-      <p class="pricing-per">per student / per session</p>
-      <span style="display:inline-block;margin-top:0.75rem;padding:0.3rem 0.8rem;background:rgba(0,255,136,0.1);color:var(--accent);font-family:var(--mono);font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;clip-path:polygon(4px 0%, calc(100% - 4px) 0%, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0% calc(100% - 4px), 0% 4px);">
-        Early access rate. Limited sessions.
-      </span>
-      <ul class="pricing-features" style="margin-top: 1.5rem;">
-        <li>90-minute live workshop over Zoom</li>
-        <li>Live personal website, deployed and yours</li>
-        <li>Working AI-built micro-app</li>
-        <li>Student handout with prompt templates</li>
-        <li>A portfolio you can keep adding to</li>
-      </ul>
-      <a href="#contact" class="btn btn-primary pricing-btn">Get started</a>
+        <p class="pricing-label">workshop</p>
+        <p class="pricing-original">$350</p>
+        <p class="pricing-price">$300</p>
+        <p class="pricing-per">per student / per session</p>
+        <span class="pricing-save">Early access rate. Limited sessions.</span>
+        <ul class="pricing-features" style="margin-top: 1.5rem;">
+            <li>90-minute live workshop over Zoom</li>
+            <li>Live personal website, deployed and yours</li>
+            <li>Working AI-built micro-app</li>
+            <li>Student handout with prompt templates</li>
+            <li>A portfolio you can keep adding to</li>
+        </ul>
+        <a href="#contact" class="btn btn-primary pricing-btn">Get started</a>
     </div>
-  </section>
+</section>
 
-  <!-- FAQ -->
-  <section id="faq">
+<!-- FAQ -->
+<section id="faq">
     <div class="reveal" style="text-align: center; margin-bottom: 3rem;">
-      <p class="section-label">// faq</p>
-      <h2 class="section-title">Common questions.</h2>
+        <p class="section-label">// faq</p>
+        <h2 class="section-title">Common questions.</h2>
     </div>
 
     <div class="faq-list">
-      <div class="faq-item reveal">
-        <button class="faq-q"><span><span class="prompt-prefix">&gt;</span>Do I need coding experience?</span><span class="arrow">+</span></button>
-        <div class="faq-a">No. AI handles the code. You handle the decisions: what to build, how it should look, what to change. That's the skill we're teaching.</div>
-      </div>
-      <div class="faq-item reveal">
-        <button class="faq-q"><span><span class="prompt-prefix">&gt;</span>What do I need to bring?</span><span class="arrow">+</span></button>
-        <div class="faq-a">A laptop with a modern browser (Chrome or Firefox). We'll send setup instructions the day before — you'll download a free code editor called Cursor, install a coding agent called Claude Code, and create a free GitHub account. It takes about ten minutes.</div>
-      </div>
-      <div class="faq-item reveal">
-        <button class="faq-q"><span><span class="prompt-prefix">&gt;</span>Can I really build something useful in 90 minutes?</span><span class="arrow">+</span></button>
-        <div class="faq-a">Yes. Students leave with a live personal website and a working web app, both deployed at URLs they own. AI handles the implementation. Students handle the direction and design decisions.</div>
-      </div>
-      <div class="faq-item reveal">
-        <button class="faq-q"><span><span class="prompt-prefix">&gt;</span>Is this just playing with ChatGPT?</span><span class="arrow">+</span></button>
-        <div class="faq-a">No. Students use a real code editor and a coding agent — the same kind of tools professional developers use. They build project files, learn software structure, and deploy working apps to the internet. The output is a portfolio, not a conversation.</div>
-      </div>
-      <div class="faq-item reveal">
-        <button class="faq-q"><span><span class="prompt-prefix">&gt;</span>How does this help with college applications?</span><span class="arrow">+</span></button>
-        <div class="faq-a">A live portfolio with working projects is more concrete than listing a course on an application. It shows initiative, technical literacy, and the ability to ship something real. These are skills that stand out regardless of what a student chooses to study.</div>
-      </div>
-      <div class="faq-item reveal">
-        <button class="faq-q"><span><span class="prompt-prefix">&gt;</span>What happens after the workshop?</span><span class="arrow">+</span></button>
-        <div class="faq-a">You keep everything you built. We provide prompt templates so you can keep adding projects on your own. Students who want to go deeper can join follow-up sessions to build more complex apps and tools.</div>
-      </div>
+        <div class="faq-item reveal">
+            <button class="faq-q"><span><span class="prompt-prefix">&gt;</span>Do I need coding experience?</span><span class="arrow">+</span></button>
+            <div class="faq-a">No. AI handles the code. You handle the decisions: what to build, how it should look, what to change. That's the skill we're teaching.</div>
+        </div>
+        <div class="faq-item reveal">
+            <button class="faq-q"><span><span class="prompt-prefix">&gt;</span>What do I need to bring?</span><span class="arrow">+</span></button>
+            <div class="faq-a">A laptop with a modern browser (Chrome or Firefox). We'll send setup instructions the day before — you'll download a free code editor called Cursor, install a coding agent called Claude Code, and create a free GitHub account. It takes about ten minutes.</div>
+        </div>
+        <div class="faq-item reveal">
+            <button class="faq-q"><span><span class="prompt-prefix">&gt;</span>Can I really build something useful in 90 minutes?</span><span class="arrow">+</span></button>
+            <div class="faq-a">Yes. Students leave with a live personal website and a working web app, both deployed at URLs they own. AI handles the implementation. Students handle the direction and design decisions.</div>
+        </div>
+        <div class="faq-item reveal">
+            <button class="faq-q"><span><span class="prompt-prefix">&gt;</span>Is this just playing with ChatGPT?</span><span class="arrow">+</span></button>
+            <div class="faq-a">No. Students use a real code editor and a coding agent — the same kind of tools professional developers use. They build project files, learn software structure, and deploy working apps to the internet. The output is a portfolio, not a conversation.</div>
+        </div>
+        <div class="faq-item reveal">
+            <button class="faq-q"><span><span class="prompt-prefix">&gt;</span>How does this help with college applications?</span><span class="arrow">+</span></button>
+            <div class="faq-a">A live portfolio with working projects is more concrete than listing a course on an application. It shows initiative, technical literacy, and the ability to ship something real. These are skills that stand out regardless of what a student chooses to study.</div>
+        </div>
+        <div class="faq-item reveal">
+            <button class="faq-q"><span><span class="prompt-prefix">&gt;</span>What happens after the workshop?</span><span class="arrow">+</span></button>
+            <div class="faq-a">You keep everything you built. We provide prompt templates so you can keep adding projects on your own. Students who want to go deeper can join follow-up sessions to build more complex apps and tools.</div>
+        </div>
     </div>
-  </section>
+</section>
 
-  <div class="chalk-line"></div>
+<div class="chalk-line"></div>
 
-  <!-- CONTACT / CTA -->
-  <section id="contact">
+<!-- CONTACT / CTA -->
+<section id="contact">
     <div class="reveal" style="text-align: center;">
-      <p class="section-label">// get started</p>
-      <h2 class="section-title">Interested?</h2>
-      <p class="section-desc" style="margin: 1rem auto 0; max-width: 520px;">
-        Shipyard is offered through select college counseling practices. Ask your counselor about scheduling a session for your student, or reach out to learn more.
-      </p>
+        <p class="section-label">// get started</p>
+        <h2 class="section-title">Interested?</h2>
+        <p class="section-desc" style="margin: 1rem auto 0; max-width: 520px;">Shipyard is offered through select college counseling practices. Ask your counselor about scheduling a session for your student, or reach out to learn more.</p>
     </div>
-  </section>
+</section>
 
-  <!-- FOOTER -->
-  <footer>
+<!-- FOOTER -->
+<footer>
     <p style="font-size: 0.65rem; color: var(--text-muted); font-family: var(--mono);">&copy; 2026 shipyard</p>
-  </footer>
+</footer>
 
-  <script>
+<script>
     // ── SCROLL REVEAL ──
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
-      });
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
     document.querySelectorAll('.reveal, .reveal-scale').forEach(el => observer.observe(el));
 
     // ── SCROLL PROGRESS BAR ──
     window.addEventListener('scroll', () => {
-      const scrollTop = document.documentElement.scrollTop;
-      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const progress = (scrollTop / scrollHeight) * 100;
-      document.getElementById('scrollProgress').style.width = progress + '%';
-      document.getElementById('nav').classList.toggle('scrolled', scrollTop > 50);
+        const scrollTop = document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const progress = (scrollTop / scrollHeight) * 100;
+        document.getElementById('scrollProgress').style.width = progress + '%';
+        document.getElementById('nav').classList.toggle('scrolled', scrollTop > 50);
     });
 
     // ── COUNTER ANIMATION ──
     const counterObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const el = entry.target;
-        const target = parseInt(el.dataset.target, 10);
-        const prefix = el.dataset.prefix || '';
-        const suffix = el.dataset.suffix || '';
-        let current = 0;
-        const step = Math.max(1, Math.floor(target / 40));
-        const timer = setInterval(() => {
-          current += step;
-          if (current >= target) { current = target; clearInterval(timer); }
-          el.textContent = prefix + current + suffix;
-        }, 30);
-        counterObserver.unobserve(el);
-      });
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+            const target = parseInt(el.dataset.target, 10);
+            const prefix = el.dataset.prefix || '';
+            const suffix = el.dataset.suffix || '';
+            let current = 0;
+            const step = Math.max(1, Math.floor(target / 40));
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                el.textContent = prefix + current + suffix;
+            }, 30);
+            counterObserver.unobserve(el);
+        });
     }, { threshold: 0.5 });
 
     document.querySelectorAll('.counter-num').forEach(el => counterObserver.observe(el));
-
-    // ── GLITCH STRIKE: COMPUTE DIAGONAL ANGLE ──
-    function updateStrikeAngle() {
-      const card = document.querySelector('.problem-card.old');
-      if (!card) return;
-      const strike = card.querySelector('.glitch-strike');
-      const angle = Math.atan2(card.offsetHeight, card.offsetWidth) * (180 / Math.PI);
-      strike.style.setProperty('--strike-angle', angle + 'deg');
-    }
-    updateStrikeAngle();
-    window.addEventListener('resize', updateStrikeAngle);
-
-    // ── FAQ ACCORDION ──
-    document.querySelectorAll('.faq-q').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const item = btn.parentElement;
-        const wasOpen = item.classList.contains('open');
-        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-        if (!wasOpen) item.classList.add('open');
-      });
-    });
 
     // ── MOBILE NAV: TOGGLE + SCROLL LOCK + TAP OUTSIDE ──
     const nav = document.getElementById('nav');
@@ -1420,66 +1484,89 @@
     let scrollYBeforeLock = 0;
 
     function lockBodyScroll() {
-      scrollYBeforeLock = window.scrollY || window.pageYOffset || 0;
-      document.body.classList.add('nav-lock');
-      document.body.style.top = `-${scrollYBeforeLock}px`;
+        scrollYBeforeLock = window.scrollY || window.pageYOffset || 0;
+        document.body.classList.add('nav-lock');
+        document.body.style.top = `-${scrollYBeforeLock}px`;
     }
 
     function unlockBodyScroll() {
-      document.body.classList.remove('nav-lock');
-      const y = scrollYBeforeLock;
-      document.body.style.top = '';
-      window.scrollTo(0, y);
+        document.body.classList.remove('nav-lock');
+        const y = scrollYBeforeLock;
+        document.body.style.top = '';
+        window.scrollTo(0, y);
     }
 
     function openMenu() {
-      navHamburger.classList.add('open');
-      navLinks.classList.add('open');
-      nav.classList.add('menu-open');
-      navHamburger.setAttribute('aria-expanded', 'true');
-      navHamburger.setAttribute('aria-label', 'Close menu');
-      lockBodyScroll();
+        navHamburger.classList.add('open');
+        navLinks.classList.add('open');
+        nav.classList.add('menu-open');
+        navHamburger.setAttribute('aria-expanded', 'true');
+        navHamburger.setAttribute('aria-label', 'Close menu');
+        lockBodyScroll();
     }
 
     function closeMenu() {
-      navHamburger.classList.remove('open');
-      navLinks.classList.remove('open');
-      nav.classList.remove('menu-open');
-      navHamburger.setAttribute('aria-expanded', 'false');
-      navHamburger.setAttribute('aria-label', 'Open menu');
-      unlockBodyScroll();
+        navHamburger.classList.remove('open');
+        navLinks.classList.remove('open');
+        nav.classList.remove('menu-open');
+        navHamburger.setAttribute('aria-expanded', 'false');
+        navHamburger.setAttribute('aria-label', 'Open menu');
+        unlockBodyScroll();
     }
 
     function toggleMenu() {
-      if (navLinks.classList.contains('open')) closeMenu();
-      else openMenu();
+        if (navLinks.classList.contains('open')) closeMenu();
+        else openMenu();
     }
 
     navHamburger.addEventListener('click', toggleMenu);
 
     // Close on link click
     document.querySelectorAll('#navLinks a').forEach(link => {
-      link.addEventListener('click', () => {
-        if (navLinks.classList.contains('open')) closeMenu();
-      });
+        link.addEventListener('click', () => {
+            if (navLinks.classList.contains('open')) closeMenu();
+        });
     });
 
-    // ✅ Tap outside (overlay background) closes — but not when tapping a link
+    // Tap outside (overlay background) closes (but not when tapping a link)
     navLinks.addEventListener('click', (e) => {
-      if (!navLinks.classList.contains('open')) return;
-      if (e.target.closest('a')) return;
-      closeMenu();
+        if (!navLinks.classList.contains('open')) return;
+        if (e.target.closest('a')) return; // link clicks already handled
+        closeMenu();
     });
 
     // Close on ESC key
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && navLinks.classList.contains('open')) closeMenu();
+        if (e.key === 'Escape' && navLinks.classList.contains('open')) closeMenu();
     });
 
     // If resized back to desktop, ensure scroll unlocks
     window.addEventListener('resize', () => {
-      if (window.innerWidth > 1024 && navLinks.classList.contains('open')) closeMenu();
+        if (window.innerWidth > 1024 && navLinks.classList.contains('open')) closeMenu();
     });
-  </script>
+
+    // ── GLITCH STRIKE: COMPUTE DIAGONAL ANGLE ──
+    function updateStrikeAngle() {
+        const card = document.querySelector('.problem-card.old');
+        if (card) {
+            const strike = card.querySelector('.glitch-strike');
+            const angle = Math.atan2(card.offsetHeight, card.offsetWidth) * (180 / Math.PI);
+            strike.style.setProperty('--strike-angle', angle + 'deg');
+        }
+    }
+    updateStrikeAngle();
+    window.addEventListener('resize', updateStrikeAngle);
+
+    // ── FAQ ACCORDION ──
+    document.querySelectorAll('.faq-q').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = btn.parentElement;
+            const wasOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            if (!wasOpen) item.classList.add('open');
+        });
+    });
+</script>
+
 </body>
 </html>
