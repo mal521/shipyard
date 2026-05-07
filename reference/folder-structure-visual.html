@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Folder Structure</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0a0f;
+    color: #e2e8f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 40px 24px 60px;
+  }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: #8b92a0;
+    margin-bottom: 40px;
+  }
+
+  .tree {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    position: relative;
+  }
+
+  .indent {
+    width: 28px;
+    flex-shrink: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .indent::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: #2a2a3a;
+  }
+
+  .branch {
+    width: 28px;
+    flex-shrink: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .branch::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    height: 50%;
+    width: 1px;
+    background: #2a2a3a;
+  }
+
+  .branch::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 50%;
+    height: 1px;
+    background: #2a2a3a;
+  }
+
+  .node {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px 8px 10px;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 0;
+    transition: background 0.15s;
+    cursor: default;
+  }
+
+  .node:hover { background: #1c1c2e; }
+
+  .icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    width: 22px;
+    text-align: center;
+  }
+
+  .label {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .desc {
+    font-size: 12px;
+    color: #4a5568;
+    margin-left: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Color themes per type */
+  .type-home .label  { color: #a78bfa; }
+  .type-hidden .label { color: #ff00ff; }
+  .type-folder .label { color: #00d4ff; }
+  .type-global .label { color: #00ff88; }
+  .type-project .label { color: #00d4ff; }
+  .type-readme .label { color: #ff00ff; }
+  .type-snapshot .label { color: #ff3366; }
+  .type-tasks-folder .label { color: #00d4ff; }
+  .type-todo .label { color: #00ff88; }
+  .type-lessons .label { color: #ff00ff; }
+  .type-optional .label { color: #8b92a0; }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+
+  .badge-hidden  { background: #2a0a2a; color: #ff00ff; }
+  .badge-global  { background: #0a2a1a; color: #00ff88; }
+  .badge-auto    { background: #0a1a2a; color: #00d4ff; }
+  .badge-optional { background: #1c1c2e; color: #8b92a0; }
+
+  .section-gap { height: 16px; }
+
+  .legend {
+    margin-top: 40px;
+    width: 100%;
+    max-width: 680px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #12121a;
+    border: 1px solid #2a2a3a;
+    border-radius: 8px;
+    padding: 10px 14px;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-text { font-size: 12px; color: #8b92a0; line-height: 1.4; }
+  .legend-name { display: block; font-weight: 600; color: #e2e8f0; margin-bottom: 1px; }
+
+  @media print {
+    body { width: 680px; margin: 0 auto; background: #ffffff; color: #1a1a2e; padding: 20px 24px; }
+
+    h1 { color: #1a1a2e; }
+    .subtitle { color: #444455; }
+
+    /* Tree lines */
+    .indent::before, .branch::before, .branch::after { background: #d0d0d8; }
+
+    /* Nodes */
+    .node { transition: none; }
+    .node:hover { background: transparent; }
+
+    /* Fix text bleed: allow descriptions to wrap instead of clip */
+    .desc { color: #444455; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+
+    /* Color-coded labels - darker print-safe versions */
+    .type-home .label { color: #6644aa; }
+    .type-hidden .label { color: #990077; }
+    .type-folder .label { color: #006688; }
+    .type-global .label { color: #007744; }
+    .type-project .label { color: #006688; }
+    .type-readme .label { color: #990077; }
+    .type-snapshot .label { color: #cc2244; }
+    .type-tasks-folder .label { color: #006688; }
+    .type-todo .label { color: #007744; }
+    .type-lessons .label { color: #990077; }
+    .type-optional .label { color: #444455; }
+
+    /* Badges */
+    .badge-hidden { background: #f0e0f0; color: #990077; }
+    .badge-global { background: #e0f0e8; color: #007744; }
+    .badge-auto { background: #e0f0f5; color: #006688; }
+    .badge-optional { background: #f0f0f5; color: #444455; }
+
+    /* Legend */
+    .legend-item { background: #f5f5f8; border-color: #d0d0d8; }
+    .legend-text { color: #444455; }
+    .legend-name { color: #1a1a2e; }
+
+    /* ── NUCLEAR OVERRIDE: kill all inline dark-theme colors ── */
+    p[style], div[style], span[style] { color: #1a1a2e !important; }
+    strong[style] { color: #1a1a2e !important; }
+
+    /* Inline-styled sections at bottom (publish, privacy) */
+    div[style*="background:#12121a"] { background: #f5f5f8 !important; border-color: #d0d0d8 !important; }
+    div[style*="background:#0a0a0f"] { background: #ffffff !important; }
+    div[style*="border:1.5px solid #ff00ff"] { background: #f5f5f8 !important; border-color: #990077 !important; }
+    strong[style*="color:#ff00ff"] { color: #990077 !important; }
+    div[style*="color:#f8fafc"] { color: #1a1a2e !important; }
+    div[style*="color:#8b92a0"] { color: #444455 !important; }
+    div[style*="color:#c0c0c0"] { color: #1a1a2e !important; }
+    div[style*="color:#e0e0e0"] { color: #1a1a2e !important; }
+    strong[style*="color:#e0e0e0"] { color: #1a1a2e !important; }
+    strong[style*="color:#00ff88"] { color: #007744 !important; }
+    div[style*="background:#00ff88"] { background: #007744 !important; color: #ffffff !important; }
+    div[style*="background:#00d4ff"] { background: #006688 !important; color: #ffffff !important; }
+    div[style*="background:#0a1a0a"] { background: #e8f5e8 !important; border-color: #b0d8b0 !important; }
+    div[style*="color:#4a9a6a"] { color: #007744 !important; }
+    code[style*="background:#1c1c2e"] { background: #f0f0f5 !important; color: #007744 !important; }
+
+    /* Page break controls */
+    .row { page-break-inside: avoid; }
+    .legend { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Claude Code Folder Structure</h1>
+<p class="subtitle">Where everything lives on your Mac</p>
+
+<div class="tree">
+
+  <!-- Home folder -->
+  <div class="row">
+    <div class="node type-home">
+      <span class="icon">🏠</span>
+      <span class="label">firstname-lastname/</span>
+      <span class="desc">your home folder &nbsp;·&nbsp; also written as ~</span>
+    </div>
+  </div>
+
+  <!-- .claude hidden -->
+  <div class="row">
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-hidden">
+      <span class="icon">🔒</span>
+      <span class="label">.claude/</span>
+      <span class="badge badge-hidden">hidden</span>
+      <span class="desc">auto-created by Claude Code</span>
+    </div>
+  </div>
+
+  <!-- CLAUDE.md global -->
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-global">
+      <span class="icon">📋</span>
+      <span class="label">CLAUDE.md</span>
+      <span class="badge badge-global">global rules</span>
+      <span class="desc">Claude follows this in EVERY project</span>
+    </div>
+  </div>
+
+  <!-- settings.json -->
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-optional">
+      <span class="icon">⚙️</span>
+      <span class="label">settings.json</span>
+      <span class="badge badge-optional">auto</span>
+      <span class="desc">Claude Code settings (auto-managed)</span>
+    </div>
+  </div>
+
+  <div class="section-gap"></div>
+
+  <!-- claudeprojects -->
+  <div class="row">
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-folder">
+      <span class="icon">📁</span>
+      <span class="label">claudeprojects/</span>
+      <span class="desc">where all your projects live</span>
+    </div>
+  </div>
+
+  <!-- project-one -->
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-project">
+      <span class="icon">📂</span>
+      <span class="label">project-one/</span>
+      <span class="desc">one folder per project</span>
+    </div>
+  </div>
+
+  <!-- project CLAUDE.md -->
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-optional">
+      <span class="icon">📋</span>
+      <span class="label">CLAUDE.md</span>
+      <span class="badge badge-optional">optional</span>
+      <span class="desc">rules for this project only</span>
+    </div>
+  </div>
+
+  <!-- README.md -->
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-readme">
+      <span class="icon">📄</span>
+      <span class="label">README.md</span>
+      <span class="desc">what this project is + snapshot instructions</span>
+    </div>
+  </div>
+
+  <!-- SNAPSHOT.md -->
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-snapshot">
+      <span class="icon">💾</span>
+      <span class="label">SNAPSHOT.md</span>
+      <span class="badge badge-auto">auto-updated</span>
+      <span class="desc">save point to resume from</span>
+    </div>
+  </div>
+
+  <!-- tasks folder -->
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-tasks-folder">
+      <span class="icon">📁</span>
+      <span class="label">tasks/</span>
+      <span class="desc">Claude's working files</span>
+    </div>
+  </div>
+
+  <!-- todo.md -->
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-todo">
+      <span class="icon">✅</span>
+      <span class="label">todo.md</span>
+      <span class="badge badge-auto">auto-updated</span>
+      <span class="desc">step-by-step plan with checkboxes</span>
+    </div>
+  </div>
+
+  <!-- lessons.md -->
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-lessons">
+      <span class="icon">🧠</span>
+      <span class="label">lessons.md</span>
+      <span class="badge badge-auto">auto-updated</span>
+      <span class="desc">mistakes learned, rules to prevent repeating</span>
+    </div>
+  </div>
+
+  <div class="section-gap"></div>
+
+  <!-- project-two (collapsed) -->
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-project">
+      <span class="icon">📂</span>
+      <span class="label">project-two/</span>
+      <span class="desc">same structure repeats for each project</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-readme">
+      <span class="icon">📄</span>
+      <span class="label">README.md</span>
+      <span class="desc"></span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-snapshot">
+      <span class="icon">💾</span>
+      <span class="label">SNAPSHOT.md</span>
+      <span class="desc"></span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="indent"></div>
+    <div class="branch"></div>
+    <div class="node type-tasks-folder">
+      <span class="icon">📁</span>
+      <span class="label">tasks/</span>
+      <span class="desc">todo.md &nbsp;·&nbsp; lessons.md</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#ff00ff"></div>
+    <div class="legend-text">
+      <span class="legend-name">Hidden folder</span>
+      Invisible in Finder. Press Cmd+Shift+. to reveal.
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#00ff88"></div>
+    <div class="legend-text">
+      <span class="legend-name">Global CLAUDE.md</span>
+      Your rules. Claude reads this before every session on this computer.
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#00d4ff"></div>
+    <div class="legend-text">
+      <span class="legend-name">Auto-updated files</span>
+      Claude creates and updates these as it works.
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#8b92a0"></div>
+    <div class="legend-text">
+      <span class="legend-name">Optional files</span>
+      Useful but not required for every project.
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:48px;width:100%;max-width:680px;background:#12121a;border:1.5px solid #ff00ff;border-radius:16px;padding:18px 20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#e0e0e0;line-height:1.65;">
+  <strong style="color:#ff00ff;">Before you publish:</strong> Your site is public. Use first name only — no phone numbers, addresses, school names, or personal emails.
+</div>
+
+<div style="margin-top:16px;width:100%;max-width:680px;background:#12121a;border:1px solid #2a2a3a;border-radius:16px;padding:36px 32px;">
+
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+    <span style="font-size:24px;">🌐</span>
+    <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;color:#f8fafc;text-transform:uppercase;letter-spacing:0.05em;">Publish to the Internet</div>
+  </div>
+
+  <p style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#8b92a0;line-height:1.7;margin-bottom:24px;">Netlify is a free service that turns your project folder into a live website. Drag your folder, get a URL. That's it.</p>
+
+  <div style="display:flex;flex-direction:column;gap:16px;">
+
+    <div style="display:flex;gap:14px;align-items:flex-start;">
+      <div style="width:26px;height:26px;background:#00ff88;color:#0a0a0f;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;border-radius:5px;flex-shrink:0;font-family:-apple-system,sans-serif;">1</div>
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#c0c0c0;line-height:1.65;"><strong style="color:#e0e0e0;">Create a free account</strong> at netlify.com (so your site stays up permanently).</div>
+    </div>
+
+    <div style="display:flex;gap:14px;align-items:flex-start;">
+      <div style="width:26px;height:26px;background:#00ff88;color:#0a0a0f;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;border-radius:5px;flex-shrink:0;font-family:-apple-system,sans-serif;">2</div>
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#c0c0c0;line-height:1.65;"><strong style="color:#e0e0e0;">Go to <code style="font-family:'JetBrains Mono','Courier New',monospace;font-size:12px;background:#1c1c2e;color:#00ff88;padding:2px 6px;border-radius:3px;">app.netlify.com/drop</code></strong></div>
+    </div>
+
+    <div style="display:flex;gap:14px;align-items:flex-start;">
+      <div style="width:26px;height:26px;background:#00ff88;color:#0a0a0f;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;border-radius:5px;flex-shrink:0;font-family:-apple-system,sans-serif;">3</div>
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#c0c0c0;line-height:1.65;"><strong style="color:#e0e0e0;">Drag your project folder</strong> (the one with <code style="font-family:'JetBrains Mono','Courier New',monospace;font-size:12px;background:#1c1c2e;color:#00ff88;padding:2px 6px;border-radius:3px;">index.html</code> inside) onto the page.</div>
+    </div>
+
+    <div style="display:flex;gap:14px;align-items:flex-start;">
+      <div style="width:26px;height:26px;background:#00d4ff;color:#0a0a0f;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;border-radius:5px;flex-shrink:0;font-family:-apple-system,sans-serif;">4</div>
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#c0c0c0;line-height:1.65;"><strong style="color:#e0e0e0;">Your site is live</strong> instantly at a <code style="font-family:'JetBrains Mono','Courier New',monospace;font-size:12px;background:#1c1c2e;color:#00ff88;padding:2px 6px;border-radius:3px;">*.netlify.app</code> URL.</div>
+    </div>
+
+  </div>
+
+  <div style="background:#0a1a0a;border:1px solid #1a3a1a;border-radius:8px;padding:14px 18px;margin-top:20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;color:#4a9a6a;line-height:1.6;">
+    <strong style="color:#00ff88;">Updating later:</strong> Log into Netlify, go to your site's Deploys tab, and drag the updated folder onto the deploy area. Your site updates instantly.
+  </div>
+
+</div>
+
+</body>
+</html>

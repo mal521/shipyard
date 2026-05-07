@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code -- Beginner Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Share+Tech+Mono&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --border: #2a2a3a;
+    --text: #e0e0e0;
+    --muted: #8b92a0;
+    --accent: #00ff88;
+    --accent2: #00d4ff;
+    --code-bg: #0a0a0f;
+    --code-text: #e0e0e0;
+    --green: #00ff88;
+    --yellow: #ff00ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  /* ---- HERO ---- */
+  .hero {
+    background: #0a0a0f;
+    padding: 60px 32px 52px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0, 255, 136, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 136, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-label {
+    display: inline-block;
+    background: #00d4ff;
+    color: #0a0a0f;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 800;
+    color: white;
+    line-height: 1.05;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 em {
+    color: #ff00ff;
+    font-style: normal;
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: #8b92a0;
+    max-width: 480px;
+    line-height: 1.6;
+  }
+
+  /* ---- META BAR ---- */
+  .meta {
+    background: #00ff88;
+    padding: 12px 32px;
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0a0a0f;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  /* ---- MAIN CONTENT ---- */
+  .main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+  }
+
+  /* Section headers */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    margin-top: 56px;
+  }
+
+  .section-header:first-child { margin-top: 0; }
+
+  .section-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #00ff88;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Sub-section headers */
+  .sub-header {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 32px;
+    margin-bottom: 12px;
+  }
+
+  /* Numbered instruction list */
+  .steps-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .steps-list li {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .num-badge {
+    width: 28px;
+    height: 28px;
+    background: #12121a;
+    color: #00ff88;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 4px;
+    margin-top: 2px;
+    border: 1px solid #00ff88;
+  }
+
+  .step-text {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.7;
+    flex: 1;
+  }
+
+  .step-text strong { color: var(--text); }
+
+  /* Paragraph */
+  p.body-text {
+    font-size: 15px;
+    color: #e0e0e0;
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+
+  p.body-text strong { color: #e0e0e0; }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 12px 0;
+  }
+
+  .code-block code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--code-text);
+    display: block;
+    line-height: 1.7;
+    white-space: pre;
+  }
+
+  code.inline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: #1c1c2e;
+    color: #00ff88;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+
+  /* Info box */
+  .info-box {
+    background: #12121a;
+    border: 1.5px solid #2a2a3a;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  .info-box strong { color: #00ff88; }
+
+  .warn-box {
+    background: #12121a;
+    border: 1.5px solid #ff00ff;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  .warn-box strong { color: #ff00ff; }
+
+  /* Mode cards */
+  .mode-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .mode-card {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: #12121a;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .mode-card:hover {
+    border-color: #8b92a0;
+    box-shadow: 0 0 20px rgba(0,255,136,0.1);
+  }
+
+  .mode-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .mode-info {}
+  .mode-name {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .mode-name .mode-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    background: #00ff88;
+    color: #0a0a0f;
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .mode-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .mode-card.safe { border-left: 3px solid var(--green); }
+  .mode-card.medium { border-left: 3px solid var(--yellow); }
+  .mode-card.thinking { border-left: 3px solid var(--accent2); }
+  .mode-card.danger { border-left: 3px solid #ff3366; }
+
+  /* Commands reference */
+  .cmd-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+
+  .cmd-table th {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 8px 14px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .cmd-table td {
+    padding: 12px 14px;
+    font-size: 14px;
+    border-bottom: 1px solid #2a2a3a;
+    vertical-align: top;
+  }
+
+  .cmd-table td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #00ff88;
+    white-space: nowrap;
+    width: 260px;
+  }
+
+  .cmd-table td:last-child {
+    color: #8b92a0;
+  }
+
+  .cmd-table tr:last-child td { border-bottom: none; }
+  .cmd-table tr:hover td { background: #1c1c2e; }
+
+  .cmd-table .divrow td {
+    padding: 6px 14px 2px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: #0a0a0f;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Markdown-style file block */
+  .file-block {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    border: 1px solid var(--border);
+  }
+
+  .file-block code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--code-text);
+    display: block;
+    line-height: 1.7;
+    white-space: pre;
+  }
+
+  /* Screenshot placeholder — removed, no longer used */
+  }
+
+  /* File ecosystem table */
+  .file-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+
+  .file-table th {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .file-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+    border-bottom: 1px solid #2a2a3a;
+    vertical-align: top;
+    color: var(--text);
+  }
+
+  .file-table td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    color: #00ff88;
+    white-space: nowrap;
+  }
+
+  .file-table td:nth-child(2) {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .file-table tr:last-child td { border-bottom: none; }
+  .file-table tr:hover td { background: #1c1c2e; }
+
+  /* Section divider */
+  .ref-divider {
+    margin: 56px 0 0;
+    padding: 16px 0;
+    border-top: 2px solid var(--border);
+    text-align: center;
+  }
+
+  .ref-divider span {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Footer */
+  .footer {
+    background: #0a0a0f;
+    padding: 40px 32px;
+    text-align: center;
+  }
+
+  .footer p {
+    color: #8b92a0;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .footer strong { color: #e0e0e0; }
+
+  @media print {
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f8;
+      --border: #d0d0d8;
+      --text: #1a1a2e;
+      --muted: #444455;
+      --accent: #007744;
+      --accent2: #006688;
+      --code-bg: #f0f0f5;
+      --code-text: #1a1a2e;
+      --green: #007744;
+      --yellow: #990077;
+    }
+
+    body { width: 680px; margin: 0 auto; background: #ffffff; color: #1a1a2e; }
+
+    /* ── NUCLEAR OVERRIDE: kill all inline dark-theme colors ── */
+    p[style], div[style], span[style], li[style] { color: #1a1a2e !important; }
+    strong[style] { color: #1a1a2e !important; }
+
+    /* Body text class — hardcoded #e0e0e0 in the class itself */
+    p.body-text { color: #1a1a2e !important; }
+    p.body-text strong { color: #1a1a2e !important; }
+
+    /* Hero */
+    .hero { background: #ffffff; }
+    .hero-grid { display: none; }
+    .hero h1 { color: #1a1a2e; }
+    .hero h1 em { color: #990077; }
+    .hero p { color: #444455; }
+    .hero-label { display: none; }
+
+    /* Meta bar */
+    .meta { background: #007744; }
+    .meta-item { color: #ffffff; }
+
+    /* Section headers */
+    .section-num { color: #007744; }
+    .section-header h2 { color: #1a1a2e; }
+    .sub-header { color: #006688; }
+
+    /* Code blocks */
+    .code-block { background: #f0f0f5; }
+    .code-block code { color: #1a1a2e; }
+    code.inline { background: #f0f0f5; color: #007744; }
+
+    /* File blocks */
+    .file-block { background: #f0f0f5; overflow: hidden; }
+    .file-block code { color: #1a1a2e; white-space: pre-wrap !important; word-break: break-word; font-size: 11px; }
+
+    /* Prompt blocks */
+    .prompt-block { background: #f5f5f8; border-color: #006688; }
+    .prompt-label { color: #006688; }
+    .prompt-block code { color: #1a1a2e; }
+
+    /* Mode cards */
+    .mode-card { background: #f5f5f8; border-color: #d0d0d8; transition: none; box-shadow: none; }
+    .mode-card:hover { border-color: #d0d0d8; box-shadow: none; }
+    .mode-card.safe { border-left-color: #007744; }
+    .mode-card.medium { border-left-color: #990077; }
+    .mode-card.thinking { border-left-color: #006688; }
+    .mode-name { color: #1a1a2e; }
+    .mode-name .mode-key { background: #007744; color: #ffffff; }
+    .mode-desc { color: #444455; }
+
+    /* Info & warn boxes */
+    .info-box { background: #f5f5f8; border-color: #d0d0d8; color: #1a1a2e; }
+    .info-box strong { color: #007744; }
+    .warn-box { background: #f5f5f8; border-color: #990077; color: #1a1a2e; }
+    .warn-box strong { color: #990077; }
+
+
+    /* Numbered badges */
+    .num-badge { background: #f5f5f8; color: #007744; border-color: #007744; }
+    .step-text { color: #1a1a2e; }
+    .step-text strong { color: #1a1a2e; }
+
+    /* Tables */
+    .cmd-table th, .file-table th { color: #444455; border-bottom-color: #d0d0d8; }
+    .cmd-table td, .file-table td { color: #1a1a2e; border-bottom-color: #d0d0d8; }
+    .cmd-table td:first-child, .file-table td:first-child { color: #007744; }
+    .cmd-table td:last-child, .file-table td:last-child { color: #444455; }
+    .cmd-table tr:hover td, .file-table tr:hover td { background: transparent; }
+    .cmd-table .divrow td { background: #f0f0f5; color: #444455; border-top-color: #d0d0d8; }
+
+    /* Divider & footer */
+    .ref-divider { border-top-color: #d0d0d8; }
+    .ref-divider span { color: #444455; }
+    .footer { background: #ffffff; }
+    .footer p { color: #444455; }
+    .footer strong { color: #1a1a2e; }
+    .footer code { color: #007744 !important; }
+
+    /* Page break controls */
+    .code-block, .file-block, .prompt-block, .info-box, .warn-box, .mode-card { page-break-inside: avoid; }
+    .section-header { page-break-before: auto; page-break-after: avoid; }
+    .steps-list li { page-break-inside: avoid; }
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 44px 20px 40px; }
+    .main { padding: 40px 20px 60px; }
+    .meta { padding: 12px 20px; }
+    .cmd-table td:first-child { width: 180px; }
+    .section-header h2 { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <h1>Claude Code<br><em>Beginner Guide</em></h1>
+    <p>Written for high school students, parents, and anyone who has never used a terminal before. Twelve parts covering everything from installation to publishing.</p>
+  </div>
+</div>
+
+<div class="meta">
+  <div class="meta-item">💻 Mac + Cursor (free)</div>
+  <div class="meta-item">🧠 Zero experience required</div>
+  <div class="meta-item">📄 12 parts + reference</div>
+  <div class="meta-item">📅 February 2026</div>
+</div>
+
+<div class="main">
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 01: Installation -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <div class="section-line"></div>
+    <h2>Installation</h2>
+  </div>
+
+  <p class="body-text">Think of this like setting up a game. There are three things you need, and they all work together:</p>
+
+  <div class="info-box">
+    <strong>Claude Pro</strong> -- a subscription ($20/month, or start a free trial) from Anthropic. This is like buying a ticket that gives you access to Claude's brain. Without it, Claude Code won't work.<br><br>
+    <strong>Claude Code</strong> -- the actual AI assistant that lives inside your terminal (the text window on your computer). You type questions and instructions in plain English, and it does the work.<br><br>
+    <strong>Cursor</strong> -- a program that looks like a fancy notepad for writing code. It has a built-in terminal window at the bottom where you'll run Claude Code. The free version is all you need.
+  </div>
+
+  <div class="sub-header">Step 1 -- Get Claude Pro</div>
+
+  <ol class="steps-list">
+    <li>
+      <div class="num-badge">1</div>
+      <div class="step-text">Go to <strong>claude.ai</strong></div>
+    </li>
+    <li>
+      <div class="num-badge">2</div>
+      <div class="step-text">Create a free account if you don't have one</div>
+    </li>
+    <li>
+      <div class="num-badge">3</div>
+      <div class="step-text">Click your name or icon in the bottom left corner and choose <strong>Upgrade to Pro</strong></div>
+    </li>
+    <li>
+      <div class="num-badge">4</div>
+      <div class="step-text">Subscribe ($20/month) or start a free trial if you'd rather not pay right away</div>
+    </li>
+  </ol>
+
+  <div class="sub-header">Step 2 -- Install Cursor</div>
+
+  <ol class="steps-list">
+    <li>
+      <div class="num-badge">1</div>
+      <div class="step-text">Go to <strong>cursor.com</strong></div>
+    </li>
+    <li>
+      <div class="num-badge">2</div>
+      <div class="step-text">Click <strong>Download</strong> and install it like any other Mac app (drag it to your Applications folder)</div>
+    </li>
+    <li>
+      <div class="num-badge">3</div>
+      <div class="step-text">Open Cursor -- it looks like a code editor with a file list on the left side</div>
+    </li>
+  </ol>
+
+  <div class="sub-header">Step 3 -- Open the Terminal</div>
+
+  <p class="body-text">The terminal is a plain text window where you talk to your computer by typing commands. It sounds scarier than it is -- you'll be using it constantly and it becomes second nature fast.</p>
+
+  <ol class="steps-list">
+    <li>
+      <div class="num-badge">1</div>
+      <div class="step-text">In Cursor, click <strong>Terminal</strong> in the top menu bar</div>
+    </li>
+    <li>
+      <div class="num-badge">2</div>
+      <div class="step-text">Select <strong>New Terminal</strong></div>
+    </li>
+    <li>
+      <div class="num-badge">3</div>
+      <div class="step-text">A panel opens at the bottom of the screen with a blinking cursor</div>
+    </li>
+  </ol>
+
+  <p class="body-text" style="margin-top:16px;">You'll see a line that looks like this:</p>
+  <div class="code-block"><code>yourname@MacBook ~ %</code></div>
+  <p class="body-text">This is called your <strong>command prompt</strong>. It tells you you're ready to type. The <code class="inline">~</code> symbol means you're currently in your home folder.</p>
+
+  <div class="sub-header">Step 4 -- Install Claude Code</div>
+
+  <p class="body-text">Type the following command exactly and press <strong>Enter</strong>:</p>
+
+  <div class="code-block"><code>curl -fsSL https://claude.ai/install.sh | bash</code></div>
+
+  <p class="body-text">What this does: it goes out to the internet, downloads Claude Code, and installs it on your computer automatically.</p>
+
+  <p class="body-text">After it finishes, close the terminal (click the trash icon or X on the terminal panel) and open a fresh one via Terminal &gt; New Terminal. This is necessary so your computer recognizes the newly installed program.</p>
+
+  <p class="body-text">Check that it worked by typing:</p>
+  <div class="code-block"><code>claude --version</code></div>
+  <p class="body-text">You should see a version number printed back. If you see "command not found," open a completely new terminal window and try again.</p>
+
+  <div class="sub-header">Step 5 -- Log In</div>
+
+  <p class="body-text">Type:</p>
+  <div class="code-block"><code>claude</code></div>
+
+  <p class="body-text">The first time, it will ask you to log in with your Anthropic account. It will open a browser window for you to confirm. Once you're in, you're inside Claude Code and can start talking to it.</p>
+
+  <p class="body-text">To exit Claude Code at any time, type <code class="inline">/quit</code> and press Enter.</p>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 02: Setting Your Default Model -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <div class="section-line"></div>
+    <h2>Setting Your Default Model</h2>
+  </div>
+
+  <p class="body-text">Claude Code can use different versions of Claude's brain -- called <strong>models</strong>. The most powerful one is called <strong>Opus</strong>. The default is usually Sonnet, which is faster but slightly less capable.</p>
+
+  <div class="sub-header">The One-Time Setup (Recommended)</div>
+
+  <p class="body-text">This adds a single line to a hidden settings file that tells your computer "always use Opus when I launch Claude Code." Type this in the terminal:</p>
+
+  <div class="code-block"><code>echo 'export ANTHROPIC_MODEL="opus"' >> ~/.zshrc && source ~/.zshrc</code></div>
+
+  <p class="body-text">To verify it worked, type:</p>
+  <div class="code-block"><code>echo $ANTHROPIC_MODEL</code></div>
+  <p class="body-text">You should see <code class="inline">opus</code> printed back.</p>
+
+  <div class="sub-header">Switching Models During a Session</div>
+
+  <p class="body-text">If you're already inside Claude Code and want to switch models mid-conversation:</p>
+  <div class="code-block"><code>/model</code></div>
+  <p class="body-text">This opens an interactive menu where you can choose between Opus, Sonnet, or Haiku using your arrow keys. Press Enter to confirm.</p>
+
+  <div class="sub-header">The Three Models</div>
+
+  <div class="mode-cards">
+    <div class="mode-card thinking">
+      <div class="mode-icon">🧠</div>
+      <div class="mode-info">
+        <div class="mode-name">Opus</div>
+        <div class="mode-desc">The smartest, most thoughtful model. Best for complex planning, writing, and decision-making. Uses the most of your usage budget.</div>
+      </div>
+    </div>
+    <div class="mode-card safe">
+      <div class="mode-icon">⚡</div>
+      <div class="mode-info">
+        <div class="mode-name">Sonnet</div>
+        <div class="mode-desc">A great middle ground. Fast and smart. Good for most everyday tasks. The default if you don't specify anything.</div>
+      </div>
+    </div>
+    <div class="mode-card medium">
+      <div class="mode-icon">🐇</div>
+      <div class="mode-info">
+        <div class="mode-name">Haiku</div>
+        <div class="mode-desc">The quickest and cheapest. Good for simple, quick questions. Not great for anything complex.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box" style="margin-top:16px;">
+    <strong>Tip:</strong> There's also a special mode called <strong>opusplan</strong> -- it automatically uses Opus when planning and thinking, then switches to Sonnet when doing the actual writing or building. This saves your usage budget while still getting Opus's smart planning.
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 03: The Three Working Modes -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <div class="section-line"></div>
+    <h2>The Three Working Modes</h2>
+  </div>
+
+  <p class="body-text">This is one of the most important things to understand. Claude Code has three different modes that control how much it's allowed to do without asking you first. You switch between them by pressing <strong>Shift + Tab</strong> inside a running Claude Code session.</p>
+
+  <div class="mode-cards">
+    <div class="mode-card medium">
+      <div class="mode-icon">✋</div>
+      <div class="mode-info">
+        <div class="mode-name">Normal Mode <span class="mode-key">Default</span></div>
+        <div class="mode-desc">Claude asks your permission before doing almost anything -- creating files, running commands, making changes. <strong>When you're learning or working on something important, stay here.</strong></div>
+      </div>
+    </div>
+    <div class="mode-card safe">
+      <div class="mode-icon">⏵⏵</div>
+      <div class="mode-info">
+        <div class="mode-name">Auto-Accept Edits <span class="mode-key">Shift+Tab &times;1</span></div>
+        <div class="mode-desc">Claude automatically makes edits to files without stopping to ask each time. It still asks for permission before running bigger system commands. Think of it like letting a contractor work without watching every nail -- but you're still home if something big needs approval.</div>
+      </div>
+    </div>
+    <div class="mode-card thinking">
+      <div class="mode-icon">📋</div>
+      <div class="mode-info">
+        <div class="mode-name">Plan Mode <span class="mode-key">Shift+Tab &times;2</span></div>
+        <div class="mode-desc">Claude can only look at files and think -- it cannot make any changes at all. It reads everything and gives you a detailed plan. Think of it like asking an architect to describe what they'd renovate before any work begins.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-header">The Fourth Option: Dangerously Skip Permissions</div>
+
+  <div class="warn-box">
+    <strong>claude --dangerously-skip-permissions</strong><br><br>
+    Claude gets permission to do absolutely everything without ever pausing to ask. Anthropic put "dangerously" in the name on purpose. Claude could accidentally delete files you didn't want deleted, edit something it shouldn't have, or go further than you intended.<br><br>
+    <strong>Only use this</strong> for very well-defined, low-stakes tasks where you've clearly told Claude exactly what to do and what not to touch. A good rule of thumb: if you're not sure whether to use it, don't.
+  </div>
+
+  <div class="sub-header">Quick Mode Reference</div>
+
+  <table class="cmd-table">
+    <thead>
+      <tr><th>Mode</th><th>Shift+Tab Presses</th><th>What Claude Can Do</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Normal</td><td style="color:#8b92a0">0 (default)</td><td>Everything, but asks you first</td></tr>
+      <tr><td>Auto-Accept Edits</td><td style="color:#8b92a0">1 press</td><td>Makes file edits automatically; asks for bigger stuff</td></tr>
+      <tr><td>Plan Mode</td><td style="color:#8b92a0">2 presses</td><td>Can only read and think -- no changes at all</td></tr>
+      <tr><td style="color:#ff3366">Skip All</td><td style="color:#8b92a0">Launch flag</td><td>Does everything with no questions asked (use carefully)</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 04: Understanding Your Folders -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <div class="section-line"></div>
+    <h2>Understanding Your Folders</h2>
+  </div>
+
+  <div class="sub-header">How Folders Work in the Terminal</div>
+
+  <p class="body-text">Folders on your Mac (what you see in Finder) are the same folders the terminal sees. The only difference is how you write their location.</p>
+
+  <p class="body-text">In Finder you might click: <strong>YourName &gt; claudeprojects &gt; my-project</strong></p>
+  <p class="body-text">In the terminal, that same path is written as:</p>
+  <div class="code-block"><code>/Users/yourname/claudeprojects/my-project</code></div>
+
+  <p class="body-text">The <code class="inline">~</code> symbol is a shortcut that means "my home folder." So you can also write the path above as <code class="inline">~/claudeprojects/my-project</code>.</p>
+
+  <div class="sub-header">The cd Command: How to Move Around</div>
+
+  <p class="body-text"><code class="inline">cd</code> stands for "change directory." A "directory" is just another word for a folder.</p>
+
+  <table class="cmd-table">
+    <thead>
+      <tr><th>Command</th><th>What It Does</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>cd claudeprojects</td><td>Go into a folder</td></tr>
+      <tr><td>cd ~/claudeprojects/my-project</td><td>Go straight to a project</td></tr>
+      <tr><td>cd ..</td><td>Go back up one level (two dots = "go up one folder")</td></tr>
+      <tr><td>cd ~</td><td>Go all the way home from anywhere</td></tr>
+      <tr><td>pwd</td><td>Print working directory -- shows where you are</td></tr>
+      <tr><td>ls</td><td>List what's inside the current folder</td></tr>
+      <tr><td>ls -a</td><td>List everything, including hidden files (files starting with a dot)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sub-header">The Hidden .claude Folder</div>
+
+  <p class="body-text">Your Mac hides files and folders that start with a dot (<code class="inline">.</code>). These are usually settings files that you're not supposed to accidentally mess with.</p>
+
+  <p class="body-text">When Claude Code installs itself, it creates a folder called <code class="inline">.claude</code> inside your home folder. You'll never see it in Finder normally. It's not missing -- it's just hidden.</p>
+
+  <p class="body-text">Inside <code class="inline">.claude</code> is where Claude Code stores all its settings, your login credentials, and most importantly, a special instructions file called <code class="inline">CLAUDE.md</code> (explained in Part 10).</p>
+
+  <div class="info-box">
+    <strong>To peek at hidden files in Finder:</strong> Navigate to your home folder and press <strong>Cmd + Shift + .</strong> (Command + Shift + Period). Hidden files and folders will appear grayed out. Press the shortcut again to hide them.<br><br>
+    <strong>To see hidden files in the terminal:</strong> Type <code class="inline">ls -a</code> and you'll see everything, including files starting with <code class="inline">.</code>
+  </div>
+
+  <div class="sub-header">Recommended Folder Structure</div>
+
+  <div class="file-block"><code>yourname/                              &lt;- your home folder, also written as ~
+  .claude/                             &lt;- hidden folder, created automatically
+    CLAUDE.md                          &lt;- your global rules for Claude (see Part 10)
+    settings.json                      &lt;- Claude Code's settings
+  claudeprojects/                      &lt;- your projects live here
+    project-one/
+      CLAUDE.md                        &lt;- rules just for this project (optional)
+      README.md                        &lt;- what this project is
+      SNAPSHOT.md                      &lt;- save point you can return to
+      tasks/
+        todo.md                        &lt;- Claude's step-by-step plan
+        lessons.md                     &lt;- mistakes learned, rules to prevent them
+    project-two/
+      README.md
+      SNAPSHOT.md
+      tasks/
+        todo.md
+        lessons.md</code></div>
+
+  <p class="body-text">A companion visual for this is included as a separate file with this guide.</p>
+
+  <div class="sub-header">Creating a New Project</div>
+
+  <div class="code-block"><code>cd ~/claudeprojects
+mkdir my-new-project
+cd my-new-project</code></div>
+
+  <p class="body-text"><code class="inline">mkdir</code> means "make directory" -- it creates a new folder.</p>
+
+  <div class="sub-header">Starting Claude Code in a Project</div>
+
+  <p class="body-text">Always navigate into your project folder before starting Claude Code. This is how Claude knows which project it's working on -- it reads the files in whatever folder you launched it from.</p>
+
+  <div class="code-block"><code>cd ~/claudeprojects/my-project-name
+claude</code></div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 05: Terminal Shortcuts -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <div class="section-line"></div>
+    <h2>Terminal Shortcuts</h2>
+  </div>
+
+  <p class="body-text">The terminal doesn't behave exactly like a normal text box. Here are the shortcuts that save the most frustration:</p>
+
+  <table class="cmd-table">
+    <thead>
+      <tr><th>What You Want to Do</th><th>Shortcut</th></tr>
+    </thead>
+    <tbody>
+      <tr><td style="color:#8b92a0;font-family:'JetBrains Mono',monospace;">Erase everything on current line</td><td>Ctrl + U</td></tr>
+      <tr><td style="color:#8b92a0;font-family:'JetBrains Mono',monospace;">Erase from cursor to end of line</td><td>Ctrl + K</td></tr>
+      <tr><td style="color:#8b92a0;font-family:'JetBrains Mono',monospace;">Jump to start of line</td><td>Ctrl + A</td></tr>
+      <tr><td style="color:#8b92a0;font-family:'JetBrains Mono',monospace;">Jump to end of line</td><td>Ctrl + E</td></tr>
+      <tr><td style="color:#8b92a0;font-family:'JetBrains Mono',monospace;">Move backward one word</td><td>Option + Left Arrow</td></tr>
+      <tr><td style="color:#8b92a0;font-family:'JetBrains Mono',monospace;">Move forward one word</td><td>Option + Right Arrow</td></tr>
+      <tr><td style="color:#8b92a0;font-family:'JetBrains Mono',monospace;">Clear the whole screen</td><td>Ctrl + L (or type clear)</td></tr>
+      <tr><td style="color:#8b92a0;font-family:'JetBrains Mono',monospace;">Repeat your last command</td><td>Up Arrow</td></tr>
+      <tr><td style="color:#8b92a0;font-family:'JetBrains Mono',monospace;">Stop whatever is running</td><td>Ctrl + C</td></tr>
+    </tbody>
+  </table>
+
+  <p class="body-text" style="margin-top:16px;">So yes -- <strong>Ctrl + U</strong> clears the whole line. Very useful when you've made a typo halfway through a long command.</p>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 06: What Is a .md File? -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <div class="section-line"></div>
+    <h2>What Is a .md File?</h2>
+  </div>
+
+  <p class="body-text">A file ending in <code class="inline">.md</code> is a <strong>Markdown file</strong>. Markdown is a simple way to write text that can be formatted nicely -- with headings, bold text, lists, and so on.</p>
+
+  <p class="body-text">You write it in plain text using a few simple symbols:</p>
+
+  <table class="cmd-table">
+    <thead>
+      <tr><th>You Write</th><th>It Looks Like</th></tr>
+    </thead>
+    <tbody>
+      <tr><td># Big Title</td><td>A large heading</td></tr>
+      <tr><td>## Smaller Heading</td><td>A medium heading</td></tr>
+      <tr><td>**bold text**</td><td>bold text</td></tr>
+      <tr><td>- list item</td><td>a bullet point</td></tr>
+    </tbody>
+  </table>
+
+  <p class="body-text" style="margin-top:16px;">The beauty of Markdown is that even without any special software, the file is completely readable as plain text. But tools like Cursor, GitHub, or Notion will display it beautifully formatted.</p>
+
+  <p class="body-text">You'll use <code class="inline">.md</code> files constantly for notes, instructions, and documentation in your projects.</p>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 07: What Is a README? -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <div class="section-line"></div>
+    <h2>What Is a README?</h2>
+  </div>
+
+  <p class="body-text">A <code class="inline">README.md</code> file is the welcome mat of any project. It lives in the main (root) folder of a project and is the first thing anyone reads to understand what the project is.</p>
+
+  <p class="body-text">Claude Code reads your <code class="inline">README.md</code> automatically when you start a session. This means any instructions you write there will be followed every time -- no need to re-explain things from scratch.</p>
+
+  <p class="body-text">Think of the README as a standing briefing note for your AI assistant.</p>
+
+  <div class="sub-header">Other Common .md Files</div>
+
+  <table class="cmd-table">
+    <thead>
+      <tr><th>File</th><th>What It's For</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>CLAUDE.md</td><td>Instructions specifically for Claude's behavior</td></tr>
+      <tr><td>SNAPSHOT.md</td><td>A save point you can return to after closing the terminal</td></tr>
+      <tr><td>tasks/todo.md</td><td>A step-by-step plan with checkboxes</td></tr>
+      <tr><td>tasks/lessons.md</td><td>A record of mistakes and rules to avoid repeating them</td></tr>
+      <tr><td>CHANGELOG.md</td><td>A log of what changed and when</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 08: Tokens and Usage Limits -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <div class="section-line"></div>
+    <h2>Tokens &amp; Usage Limits</h2>
+  </div>
+
+  <div class="sub-header">What Is a Token?</div>
+
+  <p class="body-text">When you send a message to Claude, every word uses up a small amount of computing resource called a <strong>token</strong>. A token is roughly 3/4 of a word. So "hello" is about one token, and a paragraph of text might be 100 tokens.</p>
+
+  <p class="body-text">Think of tokens like text messages: each one uses a small amount of your plan's allowance.</p>
+
+  <div class="sub-header">How Claude Pro Limits Work</div>
+
+  <p class="body-text">Claude Pro gives you a generous monthly allowance. You'll almost never hit limits for normal use. But if you have extremely long conversations or send huge amounts of text repeatedly, you might see a message saying you've used up your current window.</p>
+
+  <div class="info-box">
+    <strong>To stay within limits:</strong><br>
+    &bull; Start a fresh session for each new task instead of letting one conversation grow forever<br>
+    &bull; Use <code class="inline">/compact</code> to summarize a long session so Claude remembers the key points without storing every single word<br>
+    &bull; Opus uses more per message than Sonnet -- use Sonnet for quick simple tasks
+  </div>
+
+  <div class="sub-header">Context Window</div>
+
+  <p class="body-text">The "context window" is how much text Claude can hold in its working memory during a single conversation. Imagine it like short-term memory -- if a conversation gets very long, the oldest parts start to fade out.</p>
+
+  <p class="body-text">When this happens, Claude might seem to "forget" earlier things you said. The fix is to either use <code class="inline">/compact</code> to compress the history, or start a new session and point Claude to the README and SNAPSHOT files to catch it up.</p>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 09: The Snapshot System -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <div class="section-line"></div>
+    <h2>The Snapshot System</h2>
+  </div>
+
+  <p class="body-text">When you close the terminal, your Claude Code session ends. Any memory of what you discussed or built is gone. The snapshot system is how you make sure nothing is lost.</p>
+
+  <p class="body-text">The idea is simple: you include instructions in your README telling Claude to save a summary file after every significant step. When you come back later, you show Claude that summary file and it picks up right where you left off.</p>
+
+  <div class="sub-header">How to Set Up Your README</div>
+
+  <p class="body-text">The easiest way is to drag this guide's PDF (or a screenshot of the template below) into the terminal in Cursor while you're inside your project folder, and tell Claude: <em>"create a README.md in this project using the example template, filled in with [a 2-3 sentence description of what you're building]."</em></p>
+
+  <p class="body-text">Claude will create the file with your project info and the snapshot instructions baked in.</p>
+
+  <div class="sub-header">README Template (For Reference)</div>
+
+  <p class="body-text">This is the template Claude will use. You can read through it to see what gets added to your project:</p>
+
+  <div class="file-block"><code># [Project Name]
+
+## What This Project Is
+[Write 2-3 sentences describing what this project does
+or what you're building]
+
+## Current Status
+[Claude will update this each session]
+
+## Instructions for Claude
+Please do the following after every significant edit or decision:
+1. Update the "Current Status" section above with what was just done
+2. Update or create a file called SNAPSHOT.md in this folder containing:
+   - The date of this snapshot
+   - A summary of what has been built or decided so far
+   - What the next steps are
+   - Any important decisions made and why
+
+When starting a new session, always read README.md and SNAPSHOT.md
+first before doing anything.</code></div>
+
+  <p class="body-text">When you come back after closing the terminal, just type:</p>
+
+  <div class="code-block"><code>"Please read README.md and SNAPSHOT.md before we begin."</code></div>
+
+  <p class="body-text">Claude will read them and be fully caught up.</p>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 10: CLAUDE.md -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <div class="section-line"></div>
+    <h2>CLAUDE.md -- Teaching Claude How to Behave</h2>
+  </div>
+
+  <div class="sub-header">What It Is</div>
+
+  <p class="body-text"><code class="inline">CLAUDE.md</code> is the most powerful file in your whole setup. Claude Code reads it automatically at the start of every session -- before you say a single word. Whatever rules, preferences, or instructions you write in it become standing behavior.</p>
+
+  <p class="body-text">There are two levels:</p>
+
+  <div class="mode-cards">
+    <div class="mode-card thinking">
+      <div class="mode-icon">🌐</div>
+      <div class="mode-info">
+        <div class="mode-name">Global</div>
+        <div class="mode-desc"><code class="inline">~/.claude/CLAUDE.md</code> -- applies to every project on your entire computer. This is where you put your universal rules -- like the workflow rules below.</div>
+      </div>
+    </div>
+    <div class="mode-card safe">
+      <div class="mode-icon">📂</div>
+      <div class="mode-info">
+        <div class="mode-name">Project-Level</div>
+        <div class="mode-desc"><code class="inline">~/claudeprojects/my-project/CLAUDE.md</code> -- applies only to that one project. Good for project-specific instructions or context.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-header">How to Set Up Your Global CLAUDE.md</div>
+
+  <p class="body-text">The easiest way is to drag and drop files or images directly into the terminal in Cursor and ask Claude to add their content to your global <code class="inline">CLAUDE.md</code>. Claude will create the hidden <code class="inline">.claude</code> folder and the <code class="inline">CLAUDE.md</code> file for you if they don't already exist.</p>
+
+  <div class="info-box">
+    <strong>Workflow rules:</strong> Drag the Workflow Orchestration screenshot (or this guide's PDF) into the terminal and tell Claude: <em>"add this content to my global CLAUDE.md."</em>
+  </div>
+
+  <div class="info-box">
+    <strong>Folder structure:</strong> Drag the Folder Structure Visual file into the terminal and tell Claude: <em>"add this folder structure to my global CLAUDE.md and follow it for all projects."</em>
+  </div>
+
+  <p class="body-text">These additions aren't mandatory, but they're really nice to have for quality control and organization.</p>
+
+  <div class="sub-header">Workflow Rules (For Reference)</div>
+
+  <p class="body-text">These are the workflow rules contained in the Workflow Orchestration screenshot. They're shown here so you can see exactly what gets added to your global <code class="inline">CLAUDE.md</code>:</p>
+
+  <div class="file-block"><code># Claude's Working Rules
+
+## Workflow Orchestration
+
+### 1. Plan Mode Default
+- Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
+- If something goes sideways, STOP and re-plan immediately -- don't keep pushing
+- Use plan mode for verification steps, not just building
+- Write detailed specs upfront to reduce ambiguity
+
+### 2. Subagent Strategy
+- Use subagents liberally to keep the main context window clean
+- Offload research, exploration, and parallel analysis to subagents
+- For complex problems, throw more compute at it via subagents
+- One task per subagent for focused execution
+
+### 3. Self-Improvement Loop
+- After ANY correction from the user: update `tasks/lessons.md` with the pattern
+- Write rules for yourself that prevent the same mistake
+- Ruthlessly iterate on these lessons until mistake rate drops
+- Review lessons at session start for the relevant project
+
+### 4. Verification Before Done
+- Never mark a task complete without proving it works
+- Diff behavior between main and your changes when relevant
+- Ask yourself: "Would a staff engineer approve this?"
+- Run tests, check logs, demonstrate correctness
+
+### 5. Demand Elegance (Balanced)
+- For non-trivial changes: pause and ask "is there a more elegant way?"
+- If a fix feels hacky: "Knowing everything I know now, implement the elegant solution"
+- Skip this for simple, obvious fixes -- don't over-engineer
+- Challenge your own work before presenting it
+
+### 6. Autonomous Bug Fixing
+- When given a bug report: just fix it. Don't ask for hand-holding
+- Point at logs, errors, failing tests -- then resolve them
+- Zero context switching required from the user
+- Go fix failing tests without being told how
+
+## Task Management
+
+1. **Plan First**: Write plan to `tasks/todo.md` with checkable items
+2. **Verify Plan**: Check in before starting implementation
+3. **Track Progress**: Mark items complete as you go
+4. **Explain Changes**: High-level summary at each step
+5. **Document Results**: Add review section to `tasks/todo.md`
+6. **Capture Lessons**: Update `tasks/lessons.md` after corrections
+
+## Core Principles
+
+- **Simplicity First**: Make every change as simple as possible. Impact minimal code.
+- **No Laziness**: Find root causes. No temporary fixes. Senior developer standards.
+- **Minimal Impact**: Changes should only touch what's necessary. Avoid introducing bugs.</code></div>
+
+  <div class="sub-header">The Full File Ecosystem</div>
+
+  <table class="file-table">
+    <thead>
+      <tr><th>File</th><th>Where It Lives</th><th>What It's For</th><th>Who Creates It</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>~/.claude/CLAUDE.md</td><td>Hidden global folder</td><td>Universal rules for all projects</td><td style="color:#8b92a0">You (once)</td></tr>
+      <tr><td>CLAUDE.md</td><td>Inside a project</td><td>Rules for just that project</td><td style="color:#8b92a0">You (per project)</td></tr>
+      <tr><td>README.md</td><td>Inside a project</td><td>What the project is + snapshot prompt</td><td style="color:#8b92a0">You + Claude updates</td></tr>
+      <tr><td>SNAPSHOT.md</td><td>Inside a project</td><td>Session save point</td><td style="color:#8b92a0">Claude auto-updates</td></tr>
+      <tr><td>tasks/todo.md</td><td>tasks/ subfolder</td><td>Step-by-step plan with checkboxes</td><td style="color:#8b92a0">Claude creates + updates</td></tr>
+      <tr><td>tasks/lessons.md</td><td>tasks/ subfolder</td><td>Mistake log + rules to avoid repeating</td><td style="color:#8b92a0">Claude updates after corrections</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 11: Working from Your Phone -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">11</span>
+    <div class="section-line"></div>
+    <h2>Working from Your Phone</h2>
+  </div>
+
+  <p class="body-text">Once you have a project running on your computer, you can mirror it into the Claude app on your phone -- handy for picking up where you left off without being tied to your desk.</p>
+
+  <div class="sub-header">How to Turn It On</div>
+
+  <p class="body-text">Inside Claude Code (in your Cursor terminal), type:</p>
+
+  <div class="code-block"><code>/remote-control</code></div>
+
+  <p class="body-text">That's it. Your project will automatically show up in the Claude app on your phone, and you can keep working on the same project from there.</p>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 12: Publishing Your Project -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">12</span>
+    <div class="section-line"></div>
+    <h2>Publishing Your Project</h2>
+  </div>
+
+  <div class="warn-box">
+    <strong>Before you publish:</strong> Your site will be public — anyone with the link can see it. Use your first name only. Don't include your phone number, home address, personal email, school name, or daily schedule.
+  </div>
+
+  <div class="sub-header">What Is Netlify?</div>
+
+  <p class="body-text">Netlify is a free service that turns your project folder into a live website. You drag your folder onto a page, and it gives you a URL anyone can visit. No complicated setup, no public code repositories -- just drag, drop, done.</p>
+
+  <div class="sub-header">Step 1 -- Create a Free Netlify Account</div>
+
+  <p class="body-text">Go to <strong>netlify.com</strong> and click <strong>Sign up</strong>. You can sign up with an email address. The free plan is all you need. Creating an account means your site stays up permanently (without an account, sites expire after a short time).</p>
+
+  <div class="sub-header">Step 2 -- Go to Netlify Drop</div>
+
+  <p class="body-text">Once logged in, go to <strong>app.netlify.com/drop</strong> in your browser. You'll see a large area that says to drag your folder here.</p>
+
+  <div class="sub-header">Step 3 -- Deploy Your Project</div>
+
+  <ol class="steps-list">
+    <li>
+      <div class="num-badge">1</div>
+      <div class="step-text">Open Finder and find your project folder (the one with <code class="inline">index.html</code> inside)</div>
+    </li>
+    <li>
+      <div class="num-badge">2</div>
+      <div class="step-text">Drag the entire folder onto the Netlify Drop page</div>
+    </li>
+    <li>
+      <div class="num-badge">3</div>
+      <div class="step-text">Wait a few seconds -- Netlify will give you a live URL that looks like <code class="inline">random-name-12345.netlify.app</code></div>
+    </li>
+  </ol>
+
+  <p class="body-text">That's your live website. Share that link with anyone and they can visit it in their browser.</p>
+
+  <div class="sub-header">Updating Your Site Later</div>
+
+  <ol class="steps-list">
+    <li>
+      <div class="num-badge">1</div>
+      <div class="step-text">Log into Netlify and go to your site's dashboard</div>
+    </li>
+    <li>
+      <div class="num-badge">2</div>
+      <div class="step-text">Click the <strong>Deploys</strong> tab</div>
+    </li>
+    <li>
+      <div class="num-badge">3</div>
+      <div class="step-text">Drag your updated project folder onto the deploy area</div>
+    </li>
+    <li>
+      <div class="num-badge">4</div>
+      <div class="step-text">Your site updates instantly at the same URL</div>
+    </li>
+  </ol>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- QUICK REFERENCE CARD -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="ref-divider">
+    <span>Quick Reference</span>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num">13</span>
+    <div class="section-line"></div>
+    <h2>Quick Reference Card</h2>
+  </div>
+
+  <table class="cmd-table">
+    <thead>
+      <tr><th>What You Want</th><th>Command or Shortcut</th></tr>
+    </thead>
+    <tbody>
+      <tr class="divrow"><td colspan="2">Moving Around</td></tr>
+      <tr><td>cd ~/claudeprojects</td><td>Go to your projects folder</td></tr>
+      <tr><td>cd project-name</td><td>Go into a project</td></tr>
+      <tr><td>cd ..</td><td>Go back up one folder</td></tr>
+      <tr><td>cd ~</td><td>Go home from anywhere</td></tr>
+      <tr><td>pwd</td><td>See where you are</td></tr>
+      <tr><td>ls</td><td>See files in current folder</td></tr>
+      <tr><td>ls -a</td><td>See hidden files too</td></tr>
+      <tr><td>mkdir folder-name</td><td>Create a new folder</td></tr>
+      <tr><td>mkdir -p folder/subfolder</td><td>Create nested folders</td></tr>
+
+      <tr class="divrow"><td colspan="2">Claude Code</td></tr>
+      <tr><td>claude</td><td>Start Claude Code</td></tr>
+      <tr><td>claude --model opus</td><td>Start with Opus model</td></tr>
+      <tr><td>/quit</td><td>Exit Claude Code</td></tr>
+      <tr><td>/model</td><td>Switch model during a session</td></tr>
+      <tr><td>/compact</td><td>Compact a long session</td></tr>
+      <tr><td>/status</td><td>Check current model</td></tr>
+
+      <tr class="divrow"><td colspan="2">Keyboard Shortcuts</td></tr>
+      <tr><td>Shift + Tab</td><td>Switch modes (normal / auto-edit / plan)</td></tr>
+      <tr><td>Ctrl + U</td><td>Erase current line</td></tr>
+      <tr><td>Ctrl + C</td><td>Stop a running command</td></tr>
+      <tr><td>Up Arrow</td><td>Repeat last command</td></tr>
+      <tr><td>clear</td><td>Clear the terminal screen</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- TROUBLESHOOTING -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">14</span>
+    <div class="section-line"></div>
+    <h2>Troubleshooting</h2>
+  </div>
+
+  <div class="warn-box">
+    <strong>"command not found: claude"</strong><br>
+    Close the terminal completely and open a new one. If it still doesn't work, run the install command from Part 1 again.
+  </div>
+
+  <div class="info-box">
+    <strong>Claude Code asks you to log in again</strong><br>
+    Completely normal if it's been a while. Just follow the browser prompts.
+  </div>
+
+  <div class="info-box">
+    <strong>Lost and don't know where you are</strong><br>
+    Type <code class="inline">pwd</code> to see your location. Type <code class="inline">cd ~</code> to go home and start fresh.
+  </div>
+
+  <div class="info-box">
+    <strong>Claude seems to have forgotten the project</strong><br>
+    Type <code class="inline">/compact</code> to compress the session, or start fresh and say "Please read README.md and SNAPSHOT.md before we begin."
+  </div>
+
+  <div class="info-box">
+    <strong>Hidden .claude folder isn't showing in Finder</strong><br>
+    Press <strong>Cmd + Shift + .</strong> while in Finder to reveal hidden files and folders.
+  </div>
+
+  <div class="warn-box">
+    <strong>Default model keeps reverting to Sonnet</strong><br>
+    This is a known bug in Claude Code. The most reliable fix is the environment variable method from Part 2 (adding it to your <code class="inline">.zshrc</code> file).
+  </div>
+
+</div><!-- end main -->
+
+<div class="footer">
+  <p><strong>Claude Code Beginner Guide</strong></p>
+  <p>Written for macOS + Cursor (free). Last updated February 2026.</p>
+</div>
+
+</body>
+</html>
