@@ -466,10 +466,9 @@ There are two levels:
 
 ### How to Set Up Your Global CLAUDE.md
 
-The easiest way is to drag and drop files or images directly into the terminal in Cursor and ask Claude to add their content to your global `CLAUDE.md`. Claude will create the hidden `.claude` folder and the `CLAUDE.md` file for you if they don't already exist.
+The easiest way is to drag this guide's PDF (or a screenshot of the workflow rules below) into the terminal in Cursor and tell Claude: *"add this content to my global CLAUDE.md."* Claude will create the hidden `.claude` folder and the `CLAUDE.md` file for you if they don't already exist.
 
-- **Workflow rules:** Drag the Workflow Orchestration screenshot (or this guide's PDF) into the terminal and tell Claude: *"add this content to my global CLAUDE.md."*
-- **Folder structure:** Drag the Folder Structure Visual file into the terminal and tell Claude: *"add this folder structure to my global CLAUDE.md and follow it for all projects."*
+You can do the same with the Folder Structure Visual -- drag it into the terminal and tell Claude: *"add this folder structure to my global CLAUDE.md and follow it for all projects."*
 
 These additions aren't mandatory, but they're really nice to have for quality control and organization.
 

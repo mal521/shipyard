@@ -406,6 +406,11 @@
     white-space: pre;
   }
 
+  .file-block.compact code {
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
   /* Screenshot placeholder — removed, no longer used */
   }
 
@@ -532,6 +537,7 @@
     /* File blocks */
     .file-block { background: #f0f0f5; overflow: hidden; }
     .file-block code { color: #1a1a2e; white-space: pre-wrap !important; word-break: break-word; font-size: 11px; }
+    .file-block.compact code { font-size: 9.5px; line-height: 1.45; }
 
     /* Prompt blocks */
     .prompt-block { background: #f5f5f8; border-color: #006688; }
@@ -1120,15 +1126,9 @@ first before doing anything.</code></div>
 
   <div class="sub-header">How to Set Up Your Global CLAUDE.md</div>
 
-  <p class="body-text">The easiest way is to drag and drop files or images directly into the terminal in Cursor and ask Claude to add their content to your global <code class="inline">CLAUDE.md</code>. Claude will create the hidden <code class="inline">.claude</code> folder and the <code class="inline">CLAUDE.md</code> file for you if they don't already exist.</p>
+  <p class="body-text">The easiest way is to drag this guide's PDF (or a screenshot of the workflow rules below) into the terminal in Cursor and tell Claude: <em>"add this content to my global CLAUDE.md."</em> Claude will create the hidden <code class="inline">.claude</code> folder and the <code class="inline">CLAUDE.md</code> file for you if they don't already exist.</p>
 
-  <div class="info-box">
-    <strong>Workflow rules:</strong> Drag the Workflow Orchestration screenshot (or this guide's PDF) into the terminal and tell Claude: <em>"add this content to my global CLAUDE.md."</em>
-  </div>
-
-  <div class="info-box">
-    <strong>Folder structure:</strong> Drag the Folder Structure Visual file into the terminal and tell Claude: <em>"add this folder structure to my global CLAUDE.md and follow it for all projects."</em>
-  </div>
+  <p class="body-text">You can do the same with the Folder Structure Visual -- drag it into the terminal and tell Claude: <em>"add this folder structure to my global CLAUDE.md and follow it for all projects."</em></p>
 
   <p class="body-text">These additions aren't mandatory, but they're really nice to have for quality control and organization.</p>
 
@@ -1136,7 +1136,7 @@ first before doing anything.</code></div>
 
   <p class="body-text">These are the workflow rules contained in the Workflow Orchestration screenshot. They're shown here so you can see exactly what gets added to your global <code class="inline">CLAUDE.md</code>:</p>
 
-  <div class="file-block"><code># Claude's Working Rules
+  <div class="file-block compact"><code># Claude's Working Rules
 
 ## Workflow Orchestration
 
